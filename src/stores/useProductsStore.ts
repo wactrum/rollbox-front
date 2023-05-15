@@ -1,15 +1,13 @@
 import { operations } from '~/domain/schema'
 import { IPaginatedResponse } from '~/domain'
-import { IProduct } from '~/domain/product'
+import { ICategory, IProduct } from '~/domain/product'
 
-type getProductsParams = operations['ProductsController_findAll']['parameters']['query']
-type getProductsResponse = IPaginatedResponse<IProduct>
+type getCategoriesResponse = ICategory[]
 
 export const useProductsStore = defineStore('products', () => {
-  const getProducts = makeAsyncApiFn<getProductsResponse, getProductsParams>('/products')
-
+  const getCategories = makeAsyncApiFn<getCategoriesResponse>('/categories/products')
 
   return {
-    getProducts,
+    getCategories,
   }
 })

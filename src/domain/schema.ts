@@ -82,6 +82,9 @@ export interface paths {
     get: operations["CategoriesController_findAll"];
     post: operations["CategoriesController_create"];
   };
+  "/categories/products": {
+    get: operations["CategoriesController_findAllWithProducts"];
+  };
   "/categories/{id}": {
     get: operations["CategoriesController_findOne"];
     delete: operations["CategoriesController_remove"];
@@ -249,21 +252,6 @@ export interface components {
     CreateCategoryDto: {
       name: string;
     };
-    CategoryEntity: {
-      id: number;
-      name: string;
-    };
-    UpdateCategoryDto: {
-      name?: string;
-    };
-    CreateProductDto: {
-      categoryId: number;
-      description: string;
-      name: string;
-      discount: number;
-      price: number;
-      productImageId: number;
-    };
     ProductImageEntity: {
       /** @enum {string} */
       provider: "LOCAL";
@@ -278,6 +266,22 @@ export interface components {
       discount: number;
       name: string;
       price: number;
+    };
+    CategoryEntity: {
+      products?: (components["schemas"]["ProductEntity"])[] | null;
+      id: number;
+      name: string;
+    };
+    UpdateCategoryDto: {
+      name?: string;
+    };
+    CreateProductDto: {
+      categoryId: number;
+      description: string;
+      name: string;
+      discount: number;
+      price: number;
+      productImageId: number;
     };
     CreateProductImageDto: {
       /** Format: binary */
@@ -801,6 +805,15 @@ export interface operations {
       };
     };
   };
+  CategoriesController_findAllWithProducts: {
+    responses: {
+      200: {
+        content: {
+          "application/json": (components["schemas"]["CategoryEntity"])[];
+        };
+      };
+    };
+  };
   CategoriesController_findOne: {
     parameters: {
       path: {
@@ -856,7 +869,7 @@ export interface operations {
         /** @description Поле для сортировки */
         sortBy?: string;
         categoryId?: number;
-        search: string;
+        search?: string;
       };
     };
     responses: {

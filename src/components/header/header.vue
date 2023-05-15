@@ -26,7 +26,7 @@ const isAuth = ref(true)
 </script>
 
 <template>
-  <Disclosure v-slot="{ open }" as="nav" class="bg-white shadow fixed w-full z-10">
+  <Disclosure v-slot="{ open }" as="nav" class="bg-white fixed w-full z-20">
     <div class="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 sticky">
       <div class="flex justify-between h-16">
         <div class="flex px-2 lg:px-0">
