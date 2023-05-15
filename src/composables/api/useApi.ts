@@ -2,13 +2,14 @@ import type { FetchContext, FetchError } from 'ofetch'
 import type { AsyncDataOptions } from '#app'
 import type { NitroFetchOptions } from 'nitropack'
 import type { RuntimeConfig } from 'nuxt/schema'
+import { _AsyncData, AsyncData, KeysOf, PickFrom } from '#app/composables/asyncData'
 
 /**
  * useApi wrapper in useAsyncData
  */
-export const useAsyncApi = async <T>(
+export const useAsyncApi = async <T, PT extends SearchParameters = any>(
   url: string,
-  options?: useApiOptions,
+  options?: useApiOptions<PT>,
   asyncOptions?: AsyncDataOptions<T | null>
 ) => {
   const key = `${url}_${options?.method ?? 'get'}` // can change or handle in params
@@ -26,10 +27,10 @@ export const useApi = async <T>(url: string, options?: useApiOptions) => {
 /**
  * Using $fetch with error handlers
  */
-const apiRequest = async <T>(
+const apiRequest = async <T, PT extends SearchParameters = any>(
   url: string,
   context: Context,
-  options?: useApiOptions
+  options?: useApiOptions<PT>
 ): Promise<T> => {
   const reqOptions: Options = createOptions(url, context, options)
   try {
@@ -211,8 +212,10 @@ const waitForRefreshQueue = (): Promise<{ isSuccess?: boolean }> => {
  * })
  */
 export const makeAsyncApiFnWithParams =
-  <T, Params extends Record<string, any>>(pathTemplate: string) =>
-  (pathParams?: Params, args?: ApiFnArguments) => {
+  <T, RouteParams extends Record<string, any>, OptionsParams extends SearchParameters = any>(
+    pathTemplate: string
+  ) =>
+  (pathParams?: RouteParams, args?: ApiFnArguments) => {
     let path = pathTemplate
 
     if (pathParams) {
@@ -221,13 +224,17 @@ export const makeAsyncApiFnWithParams =
       })
     }
 
-    return useAsyncApi<T>(path, args?.options, args?.asyncDataOptions)
+    return useAsyncApi<T, OptionsParams>(path, args?.options, args?.asyncDataOptions)
   }
 
+export type makeAsyncApiFnType<T, OptionsParams extends SearchParameters = any> = (
+  args?: ApiFnArguments<OptionsParams>
+) => ReturnType<typeof useAsyncApi<T, OptionsParams>>
+
 export const makeAsyncApiFn =
-  <T>(path: string) =>
-  (args?: ApiFnArguments): ReturnType<typeof useAsyncApi<T>> =>
-    useAsyncApi<T>(path, args?.options, args?.asyncDataOptions)
+  <T, OptionsParams extends SearchParameters = any>(path: string) =>
+  (args?: ApiFnArguments<OptionsParams>): ReturnType<typeof useAsyncApi<T>> =>
+    useAsyncApi<T, OptionsParams>(path, args?.options, args?.asyncDataOptions)
 
 interface RefreshQueueItem {
   resolve: (
@@ -235,8 +242,13 @@ interface RefreshQueueItem {
   ) => void
 }
 
-export interface useApiOptions extends NitroFetchOptions<any> {
+interface SearchParameters {
+  [key: string]: any
+}
+
+export interface useApiOptions<PT extends SearchParameters = any> extends NitroFetchOptions<any> {
   disableErrorHandling?: boolean
+  params?: PT
 }
 
 export interface Options extends NitroFetchOptions<any> {
@@ -248,8 +260,8 @@ enum StatusesEnum {
   FORBIDDEN = 403,
 }
 
-interface ApiFnArguments {
-  options?: useApiOptions
+interface ApiFnArguments<PT extends SearchParameters = any> {
+  options?: useApiOptions<PT>
   asyncDataOptions?: AsyncDataOptions<any>
 }
 

@@ -7,6 +7,7 @@ export default defineNuxtConfig({
   modules: [
     '@nuxtjs/tailwindcss',
     '@pinia/nuxt',
+    '@nuxt/image-edge',
     [
       '@nuxtjs/robots',
       {
@@ -18,6 +19,18 @@ export default defineNuxtConfig({
   css: ['@/assets/css/main.css'],
   pinia: {
     autoImports: ['defineStore', 'storeToRefs', ['defineStore', 'definePiniaStore']],
+  },
+  image: {
+    provider: 'customProvider',
+    providers: {
+      customProvider: {
+        name: 'customProvider',
+        provider: '~/utils/image-provider',
+        options: {
+          baseURL: 'http://localhost:3000',
+        },
+      },
+    },
   },
   /**
    * Переопределяется через .env
