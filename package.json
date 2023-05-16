@@ -26,6 +26,7 @@
     "nuxt": "^3.4.3",
     "postcss": "^8.4.23",
     "prettier": "^2.8.8",
+    "sass": "^1.62.1",
     "tailwindcss-animatecss": "^3.0.4",
     "typescript": "^5.0.4"
   },
@@ -35,9 +36,11 @@
     "@nuxtjs/robots": "^3.0.0",
     "@pinia/nuxt": "^0.4.9",
     "@vueuse/core": "^10.1.2",
+    "apexcharts": "^3.40.0",
     "date-fns": "^2.30.0",
     "pinia": "^2.0.35",
     "vee-validate": "^4.8.6",
+    "vue3-apexcharts": "^1.4.1",
     "yup": "^1.1.1"
   }
 }
