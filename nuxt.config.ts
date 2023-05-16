@@ -41,6 +41,9 @@ export default defineNuxtConfig({
       apiServer: 'http://localhost:3050',
     },
   },
+  routeRules: {
+    '/admin/**': { ssr: false },
+  },
   // devtools: {
   //   enabled: true,
   // },

@@ -1,13 +1,40 @@
-import { operations } from '~/domain/schema'
-import { IPaginatedResponse } from '~/domain'
-import { ICategory, IProduct } from '~/domain/product'
+import { ICategory } from '~/domain/product'
+import { components } from '~/domain/schema'
 
-type getCategoriesResponse = ICategory[]
+type IGetCategoriesResponse = ICategory[]
+type ICreateCategoryBody = components['schemas']['CreateCategoryDto']
+type IUpdateCategoryBody = components['schemas']['UpdateCategoryDto']
 
 export const useProductsStore = defineStore('products', () => {
-  const getCategories = makeAsyncApiFn<getCategoriesResponse>('/categories/products')
+  const getCategories = makeAsyncApiFn<IGetCategoriesResponse>('/categories')
+
+  const getCategoriesWithProducts = makeAsyncApiFn<IGetCategoriesResponse>('/categories/products')
+
+  const createCategory = (data: ICreateCategoryBody) => {
+    return useApi('/categories', {
+      method: 'POST',
+      body: data,
+    })
+  }
+
+  const updateCategory = (id: number, data: IUpdateCategoryBody) => {
+    return useApi(`/categories/${id}`, {
+      method: 'PUT',
+      body: data,
+    })
+  }
+
+  const deleteCategory = (id: number) => {
+    return useApi(`/categories/${id}`, {
+      method: 'DELETE',
+    })
+  }
 
   return {
     getCategories,
+    createCategory,
+    updateCategory,
+    deleteCategory,
+    getCategoriesWithProducts,
   }
 })

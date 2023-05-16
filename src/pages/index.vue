@@ -74,8 +74,8 @@
 
 <script setup lang="ts">
 import { useProductsStore } from '~/stores/useProductsStore'
-const { getCategories } = useProductsStore()
-const { data: categories } = await getCategories()
+const { getCategoriesWithProducts } = useProductsStore()
+const { data: categories } = await getCategoriesWithProducts()
 import { useIntersectionObserver } from '@vueuse/core'
 import { ICategory } from '~/domain/product'
 
