@@ -40,7 +40,7 @@ module.exports = {
     'vue/define-macros-order': [
       'error',
       {
-        order: ['defineProps', 'defineEmits'],
+        order: ['defineOptions', 'defineProps', 'defineEmits'],
       },
     ],
 

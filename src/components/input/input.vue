@@ -1,12 +1,7 @@
 <template>
-  <label class="flex flex-col gap-1">
+  <label class="flex flex-col gap-1 w-full">
     <span class="dark:text-white">{{ label }}</span>
-    <input
-      v-bind="$attrs"
-      v-model="modelValue"
-      class="rounded-lg bg-gray-300 dark:bg-slate-300 p-1"
-      @input="updateModelValue"
-    />
+    <input v-bind="$attrs" v-model="modelValue" class="p-2 rounded-xl" @input="updateModelValue" />
     <Transition
       enter-active-class="animate__animated animate__faster animate__fadeIn"
       leave-active-class="animate__animated animate__faster animate__fadeOut"
@@ -21,6 +16,10 @@
 
 <script setup lang="ts">
 import { ref, watchEffect } from 'vue'
+
+defineOptions({
+  inheritAttrs: false,
+})
 
 const props = defineProps<{
   label?: string

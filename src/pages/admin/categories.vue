@@ -1,20 +1,40 @@
 <script setup lang="ts">
 import { IColumn } from '~/components/table/types'
+import ModalConfirm from '~/components/modal/modal-confirm.vue'
+import ModalCategoryCreate from '~/components/modal/category/modal-category-create.vue'
+import { CategoryModalProviderKey } from '~/components/modal/category/types'
 
 definePageMeta({
   layout: 'admin',
 })
 
+const { showModal } = useModal()
 const columns: IColumn[] = [{ name: 'name', title: 'Название', key: 'name' }, { name: 'edit' }]
-const { getCategories } = useProductsStore()
+const { getCategories, createCategory, updateCategory } = useProductsStore()
 const { data: categories } = await getCategories()
 
+provide(CategoryModalProviderKey, {
+  onCreate: createCategory,
+  onUpdate: updateCategory,
+})
+
 const onUpdateClick = (item: any) => {
-  console.warn(item)
+  showModal(ModalCategoryCreate, {
+    props: {
+      initialData: item,
+    },
+  })
 }
 
 const onDeleteClick = (item: any) => {
-  console.warn(item)
+  showModal(ModalConfirm, {
+    props: {
+      title:
+        'Вы действительно хотите удалить категорию? Все товары привязанные к этой категории станут не доступны для просмотра пользователям',
+    },
+  }).onOk(() => {
+    console.warn(item)
+  })
 }
 </script>
 

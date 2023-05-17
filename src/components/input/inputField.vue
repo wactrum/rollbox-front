@@ -12,5 +12,5 @@ const props = defineProps<{
 const { field } = toRefs(props)
 const { value, errorMessage, meta } = field.value
 
-const isError = computed(() => !!meta.touched && !!errorMessage)
+const isError = computed(() => meta.touched && !!errorMessage)
 </script>

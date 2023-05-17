@@ -11,14 +11,14 @@ export const useProductsStore = defineStore('products', () => {
   const getCategoriesWithProducts = makeAsyncApiFn<IGetCategoriesResponse>('/categories/products')
 
   const createCategory = (data: ICreateCategoryBody) => {
-    return useApi('/categories', {
+    return useApi<ICategory>('/categories', {
       method: 'POST',
       body: data,
     })
   }
 
   const updateCategory = (id: number, data: IUpdateCategoryBody) => {
-    return useApi(`/categories/${id}`, {
+    return useApi<ICategory>(`/categories/${id}`, {
       method: 'PUT',
       body: data,
     })
