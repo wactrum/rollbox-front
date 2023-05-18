@@ -3,18 +3,12 @@ import { XMarkIcon } from '@heroicons/vue/20/solid'
 import { ICategory, ICreateCategory } from '~/domain/product'
 import * as yup from 'yup'
 import { FetchError } from 'ofetch'
-import { CategoryModalProviderKey } from '~/components/modal/category/types'
 
 const props = defineProps<{
   initialData?: ICategory
 }>()
 
-const categoryInjection = inject(CategoryModalProviderKey)
-
-if (!categoryInjection) {
-  throw Error('Not provided data for ModalCategory')
-}
-
+const { createCategory, updateCategory } = useProductsStore()
 const { initialData } = toRefs(props)
 const id = initialData?.value?.id
 
@@ -28,8 +22,8 @@ const { onSubmit, useField } = useForm<ICreateCategory, ICategory>({
   },
   params: {
     submitMethod: (data) => {
-      if (id) return categoryInjection.onUpdate(id, data)
-      return categoryInjection.onCreate(data)
+      if (id) return updateCategory(id, data)
+      return createCategory(data)
     },
     onSuccess: (data) => onOk(data),
     onError: (error: FetchError) => {

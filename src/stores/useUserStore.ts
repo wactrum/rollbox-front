@@ -25,10 +25,10 @@ export const useUserStore = defineStore('user', () => {
     return permissions.some((permission) => getPermissions.value?.includes(permission))
   }
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = async (phone: string, password: string) => {
     const data = await useApi<ISignResponse>('/login', {
       body: {
-        email,
+        phone,
         password,
       },
       method: 'POST',

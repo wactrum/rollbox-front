@@ -38,6 +38,7 @@
     "@vueuse/core": "^10.1.2",
     "apexcharts": "^3.40.0",
     "date-fns": "^2.30.0",
+    "maska": "^2.1.9",
     "pinia": "^2.0.35",
     "vee-validate": "^4.8.6",
     "vue3-apexcharts": "^1.4.1",

@@ -19,7 +19,7 @@ export const useProductsStore = defineStore('products', () => {
 
   const updateCategory = (id: number, data: IUpdateCategoryBody) => {
     return useApi<ICategory>(`/categories/${id}`, {
-      method: 'PUT',
+      method: 'PATCH',
       body: data,
     })
   }

@@ -81,14 +81,15 @@ import { ICategory } from '~/domain/product'
 
 const categoriesNames = computed<string[]>(() => categories.value?.map((el) => el.name))
 const categoriesNamesRef = ref<HTMLElement>()
-const categoriesRef = ref<{ category: ICategory; el: HTMLElement }[]>([])
+const categoriesRef = ref<{ category: string; el: HTMLElement }[]>([])
 const setCategoryRef = (el: HTMLElement, category: ICategory) => {
   categoriesRef.value.push({
     el,
     category: category.name,
-    intersection: useIntersectionObserver(el, ([{ isIntersecting, target }], observerElement) => {
-      console.warn(isIntersecting, category.name)
-    }),
+  })
+
+  useIntersectionObserver(el, ([{ isIntersecting, target }], observerElement) => {
+    console.warn(isIntersecting, category.name)
   })
 }
 </script>

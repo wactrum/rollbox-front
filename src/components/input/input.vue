@@ -1,7 +1,16 @@
 <template>
-  <label class="flex flex-col gap-1 w-full">
-    <span class="dark:text-white">{{ label }}</span>
-    <input v-bind="$attrs" v-model="modelValue" class="p-2 rounded-xl" @input="updateModelValue" />
+  <div class="">
+    <label class="relative flex flex-col gap-1 w-full shadow-sm">
+      <slot name="label">
+        <span v-if="label" class="dark:text-white">{{ label }}</span>
+      </slot>
+      <input
+        v-bind="$attrs"
+        v-model="modelValue"
+        class="p-2 rounded-xl"
+        @input="updateModelValue"
+      />
+    </label>
     <Transition
       enter-active-class="animate__animated animate__faster animate__fadeIn"
       leave-active-class="animate__animated animate__faster animate__fadeOut"
@@ -11,7 +20,7 @@
         errorMessage
       }}</span>
     </Transition>
-  </label>
+  </div>
 </template>
 
 <script setup lang="ts">

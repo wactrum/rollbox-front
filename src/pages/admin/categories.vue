@@ -2,7 +2,6 @@
 import { IColumn } from '~/components/table/types'
 import ModalConfirm from '~/components/modal/modal-confirm.vue'
 import ModalCategoryCreate from '~/components/modal/category/modal-category-create.vue'
-import { CategoryModalProviderKey } from '~/components/modal/category/types'
 
 definePageMeta({
   layout: 'admin',
@@ -10,13 +9,8 @@ definePageMeta({
 
 const { showModal } = useModal()
 const columns: IColumn[] = [{ name: 'name', title: 'Название', key: 'name' }, { name: 'edit' }]
-const { getCategories, createCategory, updateCategory } = useProductsStore()
+const { getCategories } = useProductsStore()
 const { data: categories } = await getCategories()
-
-provide(CategoryModalProviderKey, {
-  onCreate: createCategory,
-  onUpdate: updateCategory,
-})
 
 const onUpdateClick = (item: any) => {
   showModal(ModalCategoryCreate, {
@@ -42,7 +36,7 @@ const onDeleteClick = (item: any) => {
   <div class="px-2 sm:px-6 lg:px-8">
     <Table
       :columns="columns"
-      :rows="categories"
+      :rows="categories ?? []"
       @update-click="onUpdateClick"
       @delete-click="onDeleteClick"
     >

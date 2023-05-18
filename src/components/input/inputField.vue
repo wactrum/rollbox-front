@@ -1,5 +1,9 @@
 <template>
-  <Input v-model="value" :error="isError" :error-message="errorMessage" v-bind="$attrs" />
+  <Input v-model="value" :error="isError" :error-message="errorMessage" v-bind="$attrs">
+    <template v-for="(_, slot) of $slots" :key="slot" #[slot]="data">
+      <slot :name="slot" v-bind="data ?? {}" />
+    </template>
+  </Input>
 </template>
 
 <script setup lang="ts">
