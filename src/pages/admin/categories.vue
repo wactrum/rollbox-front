@@ -2,6 +2,7 @@
 import { IColumn } from '~/components/table/types'
 import ModalConfirm from '~/components/modal/modal-confirm.vue'
 import ModalCategoryCreate from '~/components/modal/category/modal-category-create.vue'
+import { ICategory } from '~/domain/product'
 
 definePageMeta({
   layout: 'admin',
@@ -17,6 +18,8 @@ const onUpdateClick = (item: any) => {
     props: {
       initialData: item,
     },
+  }).onOk((data: ICategory) => {
+    Object.assign(item, data)
   })
 }
 

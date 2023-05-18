@@ -79,7 +79,6 @@
 <script setup lang="ts">
 import * as yup from 'yup'
 import { ISignForm } from '~/stores/useUserStore'
-import type { FetchError } from 'ofetch'
 
 definePageMeta({
   layout: 'auth',
@@ -104,15 +103,20 @@ const { useField, onSubmit } = useForm<ISignForm>({
   },
   params: {
     submitMethod: async (data) => {
-      await signIn(data.phone, data.password)
+      const number = data.phone.replace(/\D/g, '')
+      const phone = `+7${number}`
+      await signIn(phone, data.password)
+    },
+    onError: (error, ctx) => {
+      if (error.statusCode === 401) {
+        phoneField.setErrors('Неправильный номер телефона или пароль')
+        return
+      }
+
+      ctx.defaults.onError(error)
     },
     onSuccess: async () => {
       await navigateTo({ name: 'index' })
-    },
-    onError: async (error: FetchError) => {
-      if (error.status === 401) {
-        phoneField.setErrors('Неправильный номер телефона или пароль')
-      }
     },
   },
 })

@@ -9,6 +9,7 @@ import {
 } from 'vee-validate'
 import type { MaybeRef } from '@vueuse/core'
 import { FetchError } from 'ofetch'
+import { Errors } from '~/composables/form/errors'
 
 /**
  * Service for working with forms
@@ -31,10 +32,12 @@ import { FetchError } from 'ofetch'
 export default <
   SubmitValues extends Record<string, any>,
   ReturnValues = SubmitValues,
-  ErrorType = FetchError
+  ErrorType extends FetchError<any> = FetchError<any>
 >(
   options: IUseFormOptions<SubmitValues, ReturnValues, ErrorType>
 ) => {
+  let oldErrors: any = null
+
   const { formParams, params } = options
 
   const pluckData = (data: any) => pluckValues(data, Object.keys(formParams.validationSchema ?? {}))
@@ -50,13 +53,23 @@ export default <
     Object.keys(formParams.validationSchema).map((el) => [el, useField(el)])
   )
 
-  const { handleSubmit, meta, setErrors, resetForm } = form
+  const { meta, setErrors, resetForm } = form
 
-  const defaults = {
+  const defaults: IDefaults<SubmitValues, ReturnValues, ErrorType> = {
     onError: (error: ErrorType) => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      //@ts-ignore
-      setErrors(error.response.data.errors)
+      if (error.response?._data.message && Array.isArray(error.response._data.message)) {
+        const errors = error.response?._data.message.reduce(
+          (result: { [x: string]: any[] }, item: { key: string | number; errors: any }) => {
+            result[item.key] = Object.keys(item.errors).map((key) => {
+              return Errors[key] || Errors.base
+            })
+            return result
+          },
+          {}
+        )
+        oldErrors = errors
+        setErrors(errors)
+      }
     },
 
     onReset: (data: ReturnValues | SubmitValues) => {
@@ -68,14 +81,30 @@ export default <
     },
   }
 
-  const onError = params.onError ?? defaults.onError
+  const onError = (
+    error: ErrorType,
+    data: any,
+    ctx: IUseFormMethodsContext<SubmitValues, ReturnValues, ErrorType>
+  ) => {
+    resetForm({
+      values: data,
+      touched: Object.keys(data).reduce((result: Record<string, boolean>, key) => {
+        result[key] = true
+        return result
+      }, {}),
+    })
+    const method = params.onError ?? defaults.onError
+    method(error, ctx)
+  }
   const onReset = params.onReset ?? defaults.onReset
 
-  const ctx: IUseFormMethodsContext<SubmitValues> = {
+  const ctx: IUseFormMethodsContext<SubmitValues, ReturnValues, ErrorType> = {
     form,
+    defaults,
   }
 
-  const onSubmit = handleSubmit(async (values) => {
+  const onSubmit = async () => {
+    let values = form.values
     if (meta.value.valid && meta.value.dirty) {
       try {
         if (params.sendModifiedOnly) {
@@ -89,18 +118,14 @@ export default <
 
         if (data) {
           onReset(data, ctx)
-
-          // params.successMessage &&
-          //   useNotify({
-          //     message: params.successMessage,
-          //     type: 'positive',
-          //   })
         }
       } catch (err) {
-        onError(err as ErrorType, ctx)
+        onError(err as ErrorType, values, ctx)
       }
+    } else if (oldErrors) {
+      setErrors(oldErrors)
     }
-  })
+  }
 
   const useFormField = <T = unknown>(
     name: MaybeRef<keyof SubmitValues | string>,
@@ -120,8 +145,22 @@ function pluckValues(obj: any, values: string[]): any {
 }
 
 // TYPES
-export interface IUseFormMethodsContext<TValues extends Record<string, any>> {
-  form: FormContext<TValues>
+export interface IUseFormMethodsContext<
+  SubmitValues extends Record<string, any>,
+  ReturnValues = SubmitValues,
+  ErrorType extends FetchError<any> = FetchError<any>
+> {
+  form: FormContext<SubmitValues>
+  defaults: IDefaults<SubmitValues, ReturnValues, ErrorType>
+}
+
+interface IDefaults<
+  SubmitValues extends Record<string, any>,
+  ReturnValues = SubmitValues,
+  ErrorType extends FetchError<any> = FetchError<any>
+> {
+  onError: (error: ErrorType) => void
+  onReset: (data: SubmitValues | ReturnValues) => void
 }
 
 interface IFormOptions<TValues extends Record<string, any>> extends FormOptions<TValues> {
@@ -131,7 +170,7 @@ interface IFormOptions<TValues extends Record<string, any>> extends FormOptions<
 export interface IUseFormOptionsParams<
   SubmitValues extends Record<string, any>,
   ReturnValues = SubmitValues,
-  ErrorType = FetchError
+  ErrorType extends FetchError<any> = FetchError<any>
 > {
   /**
    * Method to be executed when the form is submitted
@@ -143,20 +182,29 @@ export interface IUseFormOptionsParams<
    * @param params
    * @param ctx
    */
-  onSuccess?: (params: ReturnValues | null, ctx: IUseFormMethodsContext<SubmitValues>) => void
+  onSuccess?: (
+    params: ReturnValues | null,
+    ctx: IUseFormMethodsContext<SubmitValues, ReturnValues, ErrorType>
+  ) => void
   /**
    * Actions on Errors
    * @param error
    * @param ctx
    */
-  onError?: (error: ErrorType, ctx: IUseFormMethodsContext<SubmitValues>) => void
+  onError?: (
+    error: ErrorType,
+    ctx: IUseFormMethodsContext<SubmitValues, ReturnValues, ErrorType>
+  ) => void
   /**
    * Method describing the behavior of the form after a successful submission
    * If not passed, the form is filled with results
    * @param params - результат submitMethod
    * @param ctx
    */
-  onReset?: (params: ReturnValues, ctx: IUseFormMethodsContext<SubmitValues>) => void
+  onReset?: (
+    params: ReturnValues,
+    ctx: IUseFormMethodsContext<SubmitValues, ReturnValues, ErrorType>
+  ) => void
   /**
    * Notification text on successful form submission
    * @deprecated and depends on your logic
@@ -178,7 +226,7 @@ export interface IUseFormOptionsParams<
 export interface IUseFormOptions<
   SubmitValues extends Record<string, any>,
   ReturnValues = SubmitValues,
-  ErrorType = SubmitValues
+  ErrorType extends FetchError<any> = FetchError<any>
 > {
   params: IUseFormOptionsParams<SubmitValues, ReturnValues, ErrorType>
   formParams: IFormOptions<SubmitValues>
