@@ -24,7 +24,7 @@
 
         <div
           v-for="category in categories"
-          :ref="(el) => setCategoryRef(el, category)"
+          :ref="(el: any) => setCategoryRef(el, category)"
           :key="category.id"
           class="flex flex-col gap-2 py-4"
         >
@@ -79,7 +79,7 @@ const { data: categories } = await getCategoriesWithProducts()
 import { useIntersectionObserver } from '@vueuse/core'
 import { ICategory } from '~/domain/product'
 
-const categoriesNames = computed<string[]>(() => categories.value?.map((el) => el.name))
+const categoriesNames = computed<string[]>(() => categories.value?.map((el) => el.name) ?? [])
 const categoriesNamesRef = ref<HTMLElement>()
 const categoriesRef = ref<{ category: string; el: HTMLElement }[]>([])
 const setCategoryRef = (el: HTMLElement, category: ICategory) => {

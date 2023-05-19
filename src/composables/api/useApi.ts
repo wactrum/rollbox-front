@@ -2,7 +2,6 @@ import type { FetchContext, FetchError } from 'ofetch'
 import type { AsyncDataOptions } from '#app'
 import type { NitroFetchOptions } from 'nitropack'
 import type { RuntimeConfig } from 'nuxt/schema'
-import { _AsyncData, AsyncData, KeysOf, PickFrom } from '#app/composables/asyncData'
 
 /**
  * useApi wrapper in useAsyncData

@@ -10,10 +10,16 @@ definePageMeta({
 
 const { showModal } = useModal()
 const columns: IColumn[] = [{ name: 'name', title: 'Название', key: 'name' }, { name: 'edit' }]
-const { getCategories } = useProductsStore()
+const { getCategories, deleteCategory } = useProductsStore()
 const { data: categories } = await getCategories()
 
-const onUpdateClick = (item: any) => {
+const onCreateClick = () => {
+  showModal(ModalCategoryCreate).onOk((data: ICategory) => {
+    categories.value?.push(data)
+  })
+}
+
+const onUpdateClick = (item?: any) => {
   showModal(ModalCategoryCreate, {
     props: {
       initialData: item,
@@ -29,14 +35,19 @@ const onDeleteClick = (item: any) => {
       title:
         'Вы действительно хотите удалить категорию? Все товары привязанные к этой категории станут не доступны для просмотра пользователям',
     },
-  }).onOk(() => {
-    console.warn(item)
+  }).onOk(async () => {
+    await deleteCategory(item.id)
+
+    const index = categories.value?.indexOf(item)
+    if (index && index > -1) {
+      categories.value?.splice(index, 1)
+    }
   })
 }
 </script>
 
 <template>
-  <div class="px-2 sm:px-6 lg:px-8">
+  <div class="px-2 sm:px-4 lg:px-6">
     <Table
       :columns="columns"
       :rows="categories ?? []"
@@ -53,6 +64,7 @@ const onDeleteClick = (item: any) => {
             <button
               type="button"
               class="inline-flex items-center justify-center rounded-md border border-transparent bg-orange-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 sm:w-auto"
+              @click="onCreateClick"
             >
               Добавить категорию
             </button>
@@ -64,7 +76,7 @@ const onDeleteClick = (item: any) => {
         <tr>
           <th
             scope="col"
-            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
+            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900"
           >
             Название
           </th>

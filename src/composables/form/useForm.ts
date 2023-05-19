@@ -6,6 +6,7 @@ import {
   useField,
   useForm,
   FormContext,
+  Path,
 } from 'vee-validate'
 import type { MaybeRef } from '@vueuse/core'
 import { FetchError } from 'ofetch'
@@ -36,9 +37,8 @@ export default <
 >(
   options: IUseFormOptions<SubmitValues, ReturnValues, ErrorType>
 ) => {
-  let oldErrors: any = null
-
   const { formParams, params } = options
+  let serverErrors: Record<string, any> | null = null
 
   const pluckData = (data: any) => pluckValues(data, Object.keys(formParams.validationSchema ?? {}))
 
@@ -53,7 +53,7 @@ export default <
     Object.keys(formParams.validationSchema).map((el) => [el, useField(el)])
   )
 
-  const { meta, setErrors, resetForm } = form
+  const { validate, meta, setErrors, resetForm } = form
 
   const defaults: IDefaults<SubmitValues, ReturnValues, ErrorType> = {
     onError: (error: ErrorType) => {
@@ -67,7 +67,7 @@ export default <
           },
           {}
         )
-        oldErrors = errors
+        serverErrors = errors
         setErrors(errors)
       }
     },
@@ -78,6 +78,11 @@ export default <
         // @ts-ignore
         values: (params.pluckData ? pluckData(data) : data) as SubmitValues,
       })
+    },
+
+    setErrors: (data: any) => {
+      serverErrors = data
+      setErrors(data)
     },
   }
 
@@ -104,8 +109,12 @@ export default <
   }
 
   const onSubmit = async () => {
+    const isValid = await validate({
+      mode: 'validated-only',
+    })
+    console.warn(serverErrors)
     let values = form.values
-    if (meta.value.valid && meta.value.dirty) {
+    if (isValid.valid && meta.value.dirty) {
       try {
         if (params.sendModifiedOnly) {
           const changedFields = Object.keys(values).filter((el) => fields[el].meta.dirty)
@@ -115,6 +124,7 @@ export default <
         const data = await params.submitMethod(values)
 
         params.onSuccess && params.onSuccess(data ?? null, ctx)
+        serverErrors = null
 
         if (data) {
           onReset(data, ctx)
@@ -122,8 +132,11 @@ export default <
       } catch (err) {
         onError(err as ErrorType, values, ctx)
       }
-    } else if (oldErrors) {
-      setErrors(oldErrors)
+    } else if (serverErrors) {
+      setErrors(serverErrors)
+    } else if (!isValid.valid) {
+      setErrors(isValid.errors)
+      Object.keys(fields).forEach((el) => fields[el].setTouched(true))
     }
   }
 
@@ -145,6 +158,9 @@ function pluckValues(obj: any, values: string[]): any {
 }
 
 // TYPES
+type GenericObject = Record<string, any>
+type FormErrors<TValues extends GenericObject> = Partial<Record<Path<TValues>, string | undefined>>
+
 export interface IUseFormMethodsContext<
   SubmitValues extends Record<string, any>,
   ReturnValues = SubmitValues,
@@ -161,6 +177,7 @@ interface IDefaults<
 > {
   onError: (error: ErrorType) => void
   onReset: (data: SubmitValues | ReturnValues) => void
+  setErrors: (data: FormErrors<SubmitValues>) => void
 }
 
 interface IFormOptions<TValues extends Record<string, any>> extends FormOptions<TValues> {

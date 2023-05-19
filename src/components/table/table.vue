@@ -1,22 +1,42 @@
 <script setup lang="ts">
-import { PencilSquareIcon, TrashIcon } from '@heroicons/vue/24/solid'
+import {
+  PencilSquareIcon,
+  TrashIcon,
+  ChevronDownIcon,
+  ArrowLeftIcon,
+  ArrowRightIcon,
+} from '@heroicons/vue/24/solid'
 import { IColumn } from '~/components/table/types'
+import { IMeta } from '~/domain'
 
 const props = defineProps<{
   title?: string
   description?: string
   columns: IColumn[]
   rows: any[]
+  meta?: IMeta
 }>()
 
 const emit = defineEmits<{
   (event: 'updateClick', item: any): void
   (event: 'deleteClick', item: any): void
+  (event: 'changePage', page: number): void
 }>()
+
+const nextPage = () => {
+  if (props?.meta?.page && props.meta.hasNextPage) {
+    emit('changePage', props.meta.page + 1)
+  }
+}
+const prevPage = () => {
+  if (props?.meta?.page && props.meta.page !== 1) {
+    emit('changePage', props.meta.page - 1)
+  }
+}
 </script>
 
 <template>
-  <div>
+  <div class="table">
     <slot name="header">
       <div class="sm:flex sm:items-center">
         <div class="sm:flex-auto">
@@ -37,17 +57,25 @@ const emit = defineEmits<{
                   <thead class="bg-gray-50">
                     <slot name="table-head">
                       <tr>
-                        <th v-for="(column, index) in columns" :key="index">
+                        <template v-for="(column, index) in columns" :key="index">
                           <slot :name="`header-${column.name}`" :column="column">
                             <th
-                              v-if="column.title"
                               scope="col"
-                              class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
+                              class="group py-4 px-4 text-left text-sm font-semibold text-gray-900"
+                              :class="[{ 'cursor-pointer': column.sortable }]"
                             >
-                              {{ column.title }}
+                              <div v-if="column.title" class="flex">
+                                <span>{{ column.title }}</span>
+                                <span
+                                  v-if="column.sortable"
+                                  class="invisible ml-2 flex-none rounded text-gray-400 group-hover:visible group-focus:visible"
+                                >
+                                  <ChevronDownIcon class="h-5 w-5" aria-hidden="true" />
+                                </span>
+                              </div>
                             </th>
                           </slot>
-                        </th>
+                        </template>
                       </tr>
                     </slot>
                   </thead>
@@ -55,10 +83,7 @@ const emit = defineEmits<{
                     <tr v-for="(row, rowIndex) in rows" :key="rowIndex" class="group">
                       <template v-for="(column, columnIndex) in columns" :key="columnIndex">
                         <slot :name="`cell-${column.name}`" :item="row" :column="column">
-                          <td
-                            v-if="column.key"
-                            class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
-                          >
+                          <td v-if="column.key" class="px-4 py-4 text-sm text-gray-500">
                             {{ row[column.key] }}
                           </td>
                         </slot>
@@ -69,6 +94,56 @@ const emit = defineEmits<{
               </div>
             </div>
           </div>
+          <nav
+            v-if="meta && meta?.pageCount > 1"
+            class="border-t border-gray-200 px-4 flex items-center justify-between sm:px-0"
+          >
+            <div class="-mt-px w-0 flex-1 flex">
+              <button
+                class="border-t-2 border-transparent pt-4 pr-1 inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700"
+                @click="prevPage"
+              >
+                <ArrowLeftIcon class="mr-3 h-5 w-5 text-gray-400" aria-hidden="true" />
+                Предыдущая
+              </button>
+            </div>
+            <div class="hidden md:-mt-px md:flex">
+              <a
+                href="#"
+                class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-t-2 pt-4 px-4 inline-flex items-center text-sm font-medium"
+              >
+                1
+              </a>
+              <!-- Current: "border-orange-500 text-orange-600", Default: "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" -->
+              <a
+                href="#"
+                class="border-orange-500 text-orange-600 border-t-2 pt-4 px-4 inline-flex items-center text-sm font-medium"
+                aria-current="page"
+              >
+                2
+              </a>
+              <a
+                href="#"
+                class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-t-2 pt-4 px-4 inline-flex items-center text-sm font-medium"
+              >
+                3
+              </a>
+              <span
+                class="border-transparent text-gray-500 border-t-2 pt-4 px-4 inline-flex items-center text-sm font-medium"
+              >
+                ...
+              </span>
+            </div>
+            <div class="-mt-px w-0 flex-1 flex justify-end">
+              <button
+                class="border-t-2 border-transparent pt-4 pl-1 inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700"
+                @click="nextPage"
+              >
+                Следующая
+                <ArrowRightIcon class="ml-3 h-5 w-5 text-gray-400" aria-hidden="true" />
+              </button>
+            </div>
+          </nav>
         </div>
       </div>
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:hidden py-6 w-full">
@@ -115,3 +190,13 @@ const emit = defineEmits<{
     </div>
   </div>
 </template>
+
+<style lang="scss">
+.table {
+  @apply w-full;
+
+  td {
+    @apply pl-4 text-sm text-gray-500 break-words whitespace-break-spaces;
+  }
+}
+</style>

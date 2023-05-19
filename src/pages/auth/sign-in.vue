@@ -108,12 +108,13 @@ const { useField, onSubmit } = useForm<ISignForm>({
       await signIn(phone, data.password)
     },
     onError: (error, ctx) => {
-      if (error.statusCode === 401) {
-        phoneField.setErrors('Неправильный номер телефона или пароль')
-        return
-      }
-
       ctx.defaults.onError(error)
+
+      if (error.statusCode === 401) {
+        ctx.defaults.setErrors({
+          phone: 'Неправильный номер телефона или пароль',
+        })
+      }
     },
     onSuccess: async () => {
       await navigateTo({ name: 'index' })

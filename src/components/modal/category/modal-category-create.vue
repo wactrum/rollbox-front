@@ -15,7 +15,9 @@ const id = initialData?.value?.id
 const { onDismiss, onClose, onOk } = useModalActions()
 const { onSubmit, useField } = useForm<ICreateCategory, ICategory>({
   formParams: {
-    initialValues: initialData?.value,
+    initialValues: initialData?.value ?? {
+      name: null,
+    },
     validationSchema: {
       name: yup.string().required(),
     },
@@ -26,11 +28,6 @@ const { onSubmit, useField } = useForm<ICreateCategory, ICategory>({
       return createCategory(data)
     },
     onSuccess: (data) => onOk(data),
-    onError: (error: FetchError) => {
-      if (error.status === 400) {
-        usernameField.setErrors('Данная категория уже существует')
-      }
-    },
     pluckData: true,
   },
 })
@@ -46,7 +43,7 @@ const usernameField = useField('name')
           {{ initialData?.id ? 'Обновить категорию' : 'Добавить категорию' }}
         </p>
         <button class="absolute flex items-start right-[-15px] top-[-15px]" @click="onClose">
-          <XMarkIcon clickable name="icon-close" class="w-6 h-6" />
+          <XMarkIcon class="w-6 h-6" />
         </button>
       </div>
     </template>
