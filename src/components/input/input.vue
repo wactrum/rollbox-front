@@ -1,8 +1,8 @@
 <template>
-  <div class="">
+  <div>
     <label class="relative flex flex-col gap-1 w-full shadow-sm">
       <slot name="label">
-        <span v-if="label" class="dark:text-white">{{ label }}</span>
+        <span v-if="label" class="text-black">{{ label }}</span>
       </slot>
       <input
         v-bind="$attrs"

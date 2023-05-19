@@ -50,7 +50,7 @@ const usernameField = useField('name')
 
     <form class="space-y-6">
       <div class="grid grid-cols-3 gap-6">
-        <div class="col-span-3 sm:col-span-2">
+        <div class="col-span-3">
           <InputField
             :field="usernameField"
             type="text"

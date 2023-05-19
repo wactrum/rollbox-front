@@ -3,6 +3,7 @@ import { IColumn } from '~/components/table/types'
 import ModalConfirm from '~/components/modal/modal-confirm.vue'
 import ModalCategoryCreate from '~/components/modal/category/modal-category-create.vue'
 import { IProduct } from '~/domain/product'
+import ModalProductCreate from '~/components/modal/category/modal-product-create.vue'
 
 definePageMeta({
   layout: 'admin',
@@ -16,14 +17,44 @@ const columns: IColumn<IProduct>[] = [
   { name: 'category', title: 'Категория', key: 'categoryId' },
   { name: 'edit' },
 ]
+
 const { getProducts, getCategories } = useProductsStore()
-const { data: paginatedProducts } = await getProducts()
+
+const page = ref(1)
+const { data: paginatedProducts } = await getProducts({
+  options: {
+    query: {
+      page: page,
+    },
+  },
+})
+
 const { data: categories } = await getCategories({ asyncDataOptions: { lazy: true } })
+
+const onChangePage = (number: number) => {
+  page.value = number
+}
+
+const onUpdateClick = (item: IProduct) => {
+  showModal(ModalProductCreate, {
+    props: {
+      initialData: item,
+    },
+  }).onOk((data) => {
+    Object.assign(item, data)
+  })
+}
 </script>
 
 <template>
   <div class="px-2 sm:px-4 lg:px-6">
-    <Table :columns="columns" :rows="paginatedProducts?.data ?? []" :meta='paginatedProducts?.meta'>
+    <Table
+      :columns="columns"
+      :rows="paginatedProducts?.data ?? []"
+      :meta="paginatedProducts?.meta"
+      @change-page="onChangePage"
+      @update-click="onUpdateClick"
+    >
       <template #header>
         <div class="sm:flex sm:items-center">
           <div class="sm:flex-auto">
@@ -49,6 +80,10 @@ const { data: categories } = await getCategories({ asyncDataOptions: { lazy: tru
         </td>
       </template>
 
+      <template #cell-price="{ item }">
+        <td>{{ item.price }}₽</td>
+      </template>
+
       <template #cell-category="{ item }">
         <td>
           {{ item.category.name }}
@@ -60,7 +95,9 @@ const { data: categories } = await getCategories({ asyncDataOptions: { lazy: tru
           <div
             class="opacity-0 flex gap-2 justify-end group-hover:opacity-100 duration-300 transition-all"
           >
-            <button class="text-gray-500 hover:text-gray-900">Редактировать</button>
+            <button class="text-gray-500 hover:text-gray-900" @click="onUpdateClick(item)">
+              Редактировать
+            </button>
 
             <button class="text-red-500 hover:text-red-900">Удалить</button>
           </div>

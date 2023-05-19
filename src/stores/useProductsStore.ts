@@ -2,7 +2,9 @@ import { ICategory, IProduct } from '~/domain/product'
 import { components, operations } from '~/domain/schema'
 import { IPaginatedResponse } from '~/domain'
 
-type IGetProductsParams = operations['ProductsController_findAll']['parameters']
+type IGetProductsParams = operations['ProductsController_findAll']['parameters']['query']
+type ICreateProductBody = components['schemas']['CreateProductDto']
+type IUpdateProductBody = components['schemas']['UpdateProductDto']
 type IGetCategoriesResponse = ICategory[]
 type ICreateCategoryBody = components['schemas']['CreateCategoryDto']
 type IUpdateCategoryBody = components['schemas']['UpdateCategoryDto']
@@ -10,9 +12,7 @@ type IUpdateCategoryBody = components['schemas']['UpdateCategoryDto']
 export const useProductsStore = defineStore('products', () => {
   const getCategories = makeAsyncApiFn<IGetCategoriesResponse>('/categories')
   const getCategoriesWithProducts = makeAsyncApiFn<IGetCategoriesResponse>('/categories/products')
-  const getProducts = makeAsyncApiFn<IPaginatedResponse<IProduct>, IGetProductsParams>(
-    '/products'
-  )
+  const getProducts = makeAsyncApiFn<IPaginatedResponse<IProduct>, IGetProductsParams>('/products')
 
   const createCategory = (data: ICreateCategoryBody) => {
     return useApi<ICategory>('/categories', {
@@ -34,6 +34,26 @@ export const useProductsStore = defineStore('products', () => {
     })
   }
 
+  const createProduct = (data: ICreateProductBody) => {
+    return useApi<IProduct>('/products', {
+      method: 'POST',
+      body: data,
+    })
+  }
+
+  const updateProduct = (id: number, data: IUpdateProductBody) => {
+    return useApi<IProduct>(`/products/${id}`, {
+      method: 'PATCH',
+      body: data,
+    })
+  }
+
+  const deleteProduct = (id: number) => {
+    return useApi(`/products/${id}`, {
+      method: 'DELETE',
+    })
+  }
+
   return {
     getCategories,
     createCategory,
@@ -41,5 +61,8 @@ export const useProductsStore = defineStore('products', () => {
     deleteCategory,
     getCategoriesWithProducts,
     getProducts,
+    createProduct,
+    updateProduct,
+    deleteProduct,
   }
 })

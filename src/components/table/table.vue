@@ -23,6 +23,23 @@ const emit = defineEmits<{
   (event: 'changePage', page: number): void
 }>()
 
+const { meta } = toRefs(props)
+
+const pagination = computed(() => {
+  const value = meta?.value
+  if (!value) return null
+  const totalPages = [...Array(value.pageCount)].map((el, idx) => idx + 1)
+
+  const to = value.page > 3 ? value.page - 3 : 0
+  const from = value.page + 2
+
+  return {
+    showFirst: to,
+    showLast: value.page + 2 < value.pageCount,
+    pages: totalPages.slice(to, from),
+  }
+})
+
 const nextPage = () => {
   if (props?.meta?.page && props.meta.hasNextPage) {
     emit('changePage', props.meta.page + 1)
@@ -95,7 +112,7 @@ const prevPage = () => {
             </div>
           </div>
           <nav
-            v-if="meta && meta?.pageCount > 1"
+            v-if="pagination && meta && meta?.pageCount > 1"
             class="border-t border-gray-200 px-4 flex items-center justify-between sm:px-0"
           >
             <div class="-mt-px w-0 flex-1 flex">
@@ -108,31 +125,57 @@ const prevPage = () => {
               </button>
             </div>
             <div class="hidden md:-mt-px md:flex">
-              <a
-                href="#"
-                class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-t-2 pt-4 px-4 inline-flex items-center text-sm font-medium"
+              <template v-if="pagination.showFirst">
+                <button
+                  class="border-t-2 pt-4 px-4 inline-flex items-center text-sm font-medium"
+                  :class="[
+                    meta?.page === 0
+                      ? 'border-orange-500 text-orange-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
+                  ]"
+                  @click="emit('changePage', 1)"
+                >
+                  1
+                </button>
+                <span
+                  v-if="meta.page > 4"
+                  class="border-transparent text-gray-500 border-t-2 pt-4 px-4 inline-flex items-center text-sm font-medium"
+                >
+                  ...
+                </span>
+              </template>
+              <button
+                v-for="page in pagination.pages"
+                :key="page"
+                class="border-t-2 pt-4 px-4 inline-flex items-center text-sm font-medium"
+                :class="[
+                  page === meta?.page
+                    ? 'border-orange-500 text-orange-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
+                ]"
+                @click="emit('changePage', page)"
               >
-                1
-              </a>
-              <!-- Current: "border-orange-500 text-orange-600", Default: "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" -->
-              <a
-                href="#"
-                class="border-orange-500 text-orange-600 border-t-2 pt-4 px-4 inline-flex items-center text-sm font-medium"
-                aria-current="page"
-              >
-                2
-              </a>
-              <a
-                href="#"
-                class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-t-2 pt-4 px-4 inline-flex items-center text-sm font-medium"
-              >
-                3
-              </a>
-              <span
-                class="border-transparent text-gray-500 border-t-2 pt-4 px-4 inline-flex items-center text-sm font-medium"
-              >
-                ...
-              </span>
+                {{ page }}
+              </button>
+              <template v-if="pagination.showLast">
+                <span
+                  v-if="meta.pageCount > meta.page + 3"
+                  class="border-transparent text-gray-500 border-t-2 pt-4 px-4 inline-flex items-center text-sm font-medium"
+                >
+                  ...
+                </span>
+                <button
+                  class="border-t-2 pt-4 px-4 inline-flex items-center text-sm font-medium"
+                  :class="[
+                    meta?.page === 0
+                      ? 'border-orange-500 text-orange-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
+                  ]"
+                  @click="emit('changePage', meta.pageCount)"
+                >
+                  {{ meta?.pageCount }}
+                </button>
+              </template>
             </div>
             <div class="-mt-px w-0 flex-1 flex justify-end">
               <button

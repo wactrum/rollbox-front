@@ -12,24 +12,6 @@ import type { MaybeRef } from '@vueuse/core'
 import { FetchError } from 'ofetch'
 import { Errors } from '~/composables/form/errors'
 
-/**
- * Service for working with forms
- *
- * - Main concept:
- *  1. TYPE SubmitValues, form type, what data should go to the server
- *
- *  2. TYPE ReturnValues data model that is returned when submitting the form
- *
- *  3. form - base form vee-validate - if the sendModifiedOnly parameter is passed,
- *  the formParams.initialValues parameter must be passed, it is used to track modified fields
- *
- *  4. In the onReset method, initValues is reset to new data,
- *  otherwise point 3 will be violated and the data will always be considered modified,
- *  which will allow the server to be clogged with requests
- *
- *  5. the default onError works perfectly
- *  if the server is configured to output key: value errors, in other cases it can be overridden
- */
 export default <
   SubmitValues extends Record<string, any>,
   ReturnValues = SubmitValues,
@@ -112,7 +94,6 @@ export default <
     const isValid = await validate({
       mode: 'validated-only',
     })
-    console.warn(serverErrors)
     let values = form.values
     if (isValid.valid && meta.value.dirty) {
       try {

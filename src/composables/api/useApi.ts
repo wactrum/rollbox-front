@@ -12,7 +12,10 @@ export const useAsyncApi = async <T, PT extends SearchParameters = any>(
   asyncOptions?: AsyncDataOptions<T | null>
 ) => {
   const key = `${url}_${options?.method ?? 'get'}` // can change or handle in params
-  return useAsyncData<T | null>(key, async () => useApi(url, options), asyncOptions)
+  return useAsyncData<T | null>(key, () => useApi(url, options), {
+    watch: options && getAllValues(options),
+    ...asyncOptions,
+  })
 }
 
 export const useApi = async <T>(url: string, options?: useApiOptions) => {
@@ -58,7 +61,7 @@ const createOptions = (
     url,
     baseURL,
     onRequest,
-    ...options,
+    ...reactive({ ...options }),
   }
 }
 
@@ -187,6 +190,17 @@ const waitForRefreshQueue = (): Promise<{ isSuccess?: boolean }> => {
     refreshQueue.push({ resolve })
   })
 }
+
+const getAllValues = (obj: any): any =>
+  Object.values(obj).flatMap((value) => {
+    if (typeof value === 'object' && value !== null && ('value' in value || 'effect' in value)) {
+      return value
+    }
+    if (typeof value === 'object' && value !== null) {
+      return getAllValues(value)
+    }
+    return value
+  })
 
 /**
  * Generators
