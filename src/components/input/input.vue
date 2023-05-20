@@ -1,15 +1,23 @@
 <template>
   <div>
-    <label class="relative flex flex-col gap-1 w-full shadow-sm">
+    <label class="flex flex-col gap-1 w-full shadow-sm">
       <slot name="label">
         <span v-if="label" class="text-black">{{ label }}</span>
       </slot>
-      <input
-        v-bind="$attrs"
-        v-model="modelValue"
-        class="p-2 rounded-xl"
-        @input="updateModelValue"
-      />
+      <span class="relative">
+        <span v-if="$slots['before']" class="absolute left-0 bottom-0 flex items-center h-full">
+          <slot name="after" />
+        </span>
+        <input
+          v-bind="$attrs"
+          v-model="modelValue"
+          class="p-2 rounded-xl"
+          @input="updateModelValue"
+        />
+        <span v-if="$slots['after']" class="absolute right-0  bottom-0 h-full pr-3 text-sm flex items-center">
+          <slot name="after" />
+        </span>
+      </span>
     </label>
     <Transition
       enter-active-class="animate__animated animate__faster animate__fadeIn"

@@ -1,12 +1,13 @@
-import { ICategory, IProduct } from '~/domain/product'
+import { ICategory, IProduct, ICreateCategory, ICreateProduct } from '~/domain/product'
 import { components, operations } from '~/domain/schema'
 import { IPaginatedResponse } from '~/domain'
 
 type IGetProductsParams = operations['ProductsController_findAll']['parameters']['query']
-type ICreateProductBody = components['schemas']['CreateProductDto']
+type ICreateProductBody = ICreateProduct
 type IUpdateProductBody = components['schemas']['UpdateProductDto']
+
 type IGetCategoriesResponse = ICategory[]
-type ICreateCategoryBody = components['schemas']['CreateCategoryDto']
+type ICreateCategoryBody = ICreateCategory
 type IUpdateCategoryBody = components['schemas']['UpdateCategoryDto']
 
 export const useProductsStore = defineStore('products', () => {

@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { XMarkIcon } from '@heroicons/vue/20/solid'
-import { ICategory, ICreateCategory, IProduct } from '~/domain/product'
+import { ICreateProduct, IProduct } from '~/domain/product'
 import * as yup from 'yup'
-import { FetchError } from 'ofetch'
 
 const props = defineProps<{
   initialData?: IProduct
@@ -13,7 +12,7 @@ const { initialData } = toRefs(props)
 const id = initialData?.value?.id
 
 const { onDismiss, onClose, onOk } = useModalActions()
-const { onSubmit, useField } = useForm<ICreateCategory, ICategory>({
+const { onSubmit, useField } = useForm<ICreateProduct, IProduct>({
   formParams: {
     initialValues: initialData?.value,
     validationSchema: {
@@ -56,8 +55,8 @@ const categoryField = useField('categoryId')
     </template>
 
     <form class="space-y-6">
-      <div class="grid grid-cols-3 gap-6">
-        <div class="col-span-3 sm:col-span-2">
+      <div class="grid grid-cols-4 gap-6">
+        <div class="col-span-4">
           <InputField
             :field="nameField"
             type="text"
@@ -68,21 +67,16 @@ const categoryField = useField('categoryId')
         </div>
 
         <div class="col-span-3 sm:col-span-2">
-          <TextareaField
-            :field="descriptionField"
-            label="Описание"
-            class="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full sm:text-sm border border-gray-300"
-            placeholder="Сет: 'Райский ужин' содержит в себе..."
-          />
-        </div>
-
-        <div class="col-span-3 sm:col-span-2">
           <InputField
             :field="priceField"
             label="Цена"
             class="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full sm:text-sm border border-gray-300"
             placeholder="100"
-          />
+          >
+            <template #after>
+              <span>₽</span>
+            </template>
+          </InputField>
         </div>
 
         <div class="col-span-3 sm:col-span-2">
@@ -91,6 +85,19 @@ const categoryField = useField('categoryId')
             label="Скидка"
             class="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full sm:text-sm border border-gray-300"
             placeholder="100"
+          >
+            <template #after>
+              <span>₽</span>
+            </template>
+          </InputField>
+        </div>
+
+        <div class="col-span-4">
+          <TextareaField
+            :field="descriptionField"
+            label="Описание"
+            class="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full sm:text-sm border border-gray-300"
+            placeholder="Сет: 'Райский ужин' содержит в себе..."
           />
         </div>
       </div>
