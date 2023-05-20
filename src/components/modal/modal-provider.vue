@@ -90,7 +90,10 @@ provide(ModalActionsProviderKey, {
 
   <ClientOnly>
     <ModalWrapper v-model="isShow">
-      <Component :is="component" v-bind="props" />
+      <Suspense>
+        <Component :is="component" v-bind="props" />
+        <template #fallback> Loading... </template>
+      </Suspense>
     </ModalWrapper>
   </ClientOnly>
 </template>

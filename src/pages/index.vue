@@ -23,7 +23,7 @@
         <h2 class="sr-only">Каталог</h2>
 
         <div
-          v-for="category in categories"
+          v-for="category in notEmptyCategories"
           :ref="(el: any) => setCategoryRef(el, category)"
           :key="category.id"
           class="flex flex-col gap-2 py-4"
@@ -54,7 +54,7 @@
                     {{ product.name }}
                   </a>
                 </h3>
-                <p class="text-sm text-gray-500">{{ product.description }}</p>
+                <p class="text-sm text-gray-500 line-clamp-4">{{ product.description }}</p>
                 <div class="flex-1 flex flex-col justify-end items-end">
                   <button
                     type="button"
@@ -76,6 +76,7 @@
 import { useProductsStore } from '~/stores/useProductsStore'
 const { getCategoriesWithProducts } = useProductsStore()
 const { data: categories } = await getCategoriesWithProducts()
+const notEmptyCategories = computed(() => categories?.value?.filter((el) => el.products?.length))
 import { useIntersectionObserver } from '@vueuse/core'
 import { ICategory } from '~/domain/product'
 

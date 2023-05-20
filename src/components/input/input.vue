@@ -14,7 +14,10 @@
           class="p-2 rounded-xl"
           @input="updateModelValue"
         />
-        <span v-if="$slots['after']" class="absolute right-0  bottom-0 h-full pr-3 text-sm flex items-center">
+        <span
+          v-if="$slots['after']"
+          class="absolute right-0 bottom-0 h-full pr-3 text-sm flex items-center"
+        >
           <slot name="after" />
         </span>
       </span>
@@ -24,9 +27,11 @@
       leave-active-class="animate__animated animate__faster animate__fadeOut"
       mode="out-in"
     >
-      <span v-if="errorMessage && error" :key="errorMessage" class="text-red-500 text-sm">{{
-        errorMessage
-      }}</span>
+      <div v-if="errors?.length && error" class="text-red-500 flex gap-1 text-xs flex-col p-1">
+        <span v-for="item in errors" :key="item">
+          {{ item }}
+        </span>
+      </div>
     </Transition>
   </div>
 </template>
@@ -42,7 +47,8 @@ const props = defineProps<{
   label?: string
   modelValue?: string
   error?: boolean
-  errorMessage?: string
+  errors?: string[]
+  isNumber?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -56,6 +62,14 @@ watchEffect(() => {
 })
 
 const updateModelValue = (event: Event) => {
-  emit('update:modelValue', (event.target as HTMLInputElement).value)
+  let value: string | number | null = (event.target as HTMLInputElement).value
+
+  if (props.isNumber) {
+    if (!isNaN(Number(value))) {
+      value = value === '' ? null : Number(value)
+    }
+  }
+
+  emit('update:modelValue', value)
 }
 </script>

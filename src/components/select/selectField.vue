@@ -1,9 +1,9 @@
 <template>
-  <Input v-model="value" :error="isError" :errors="errors" v-bind="$attrs" :is-number="isNumber">
+  <Select v-model="value" :error="isError" :errors="errors" v-bind="$attrs">
     <template v-for="(_, slot) of $slots" :key="slot" #[slot]="data">
       <slot :name="slot" v-bind="data ?? {}" />
     </template>
-  </Input>
+  </Select>
 </template>
 
 <script setup lang="ts">
@@ -11,7 +11,6 @@ import type { FieldContext } from 'vee-validate'
 
 const props = defineProps<{
   field: FieldContext<any>
-  isNumber?: boolean
 }>()
 
 const { field } = toRefs(props)

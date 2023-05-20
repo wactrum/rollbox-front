@@ -1,21 +1,34 @@
 <script setup lang="ts">
 /**
  * Нотификации для приложения, параметры можно кастомизировать
- * (duration, position, icon...)
  */
 import { NotificationProviderKey } from '~/components/notification/types'
 
 let notificationText = ref<string>()
 let isNotificationShow = ref(false)
+let type = ref<'info' | 'error' | 'success'>('info')
+
+const colors = {
+  error: 'bg-red-400',
+  info: 'bg-indigo-400',
+  success: 'bg-green-400',
+}
 
 provide(NotificationProviderKey, {
-  show: (text) => {
+  show: (text, options) => {
+    if (options?.type) {
+      type.value = options.type
+    }
     notificationText.value = text
     isNotificationShow.value = true
 
     setTimeout(() => {
       isNotificationShow.value = false
     }, 2000)
+
+    setTimeout(() => {
+      type.value = 'info'
+    }, 3000)
   },
 })
 </script>
@@ -24,11 +37,12 @@ provide(NotificationProviderKey, {
   <div>
     <slot />
 
-    <div class="absolute top-3 right-0 z-10 flex w-[85%] justify-end">
-      <AnimateTransition enter-name="slideInRight" out-name="fadeOut" speed="fast">
-        <div v-if="isNotificationShow" class="h-10 w-full px-4">
+    <div class="absolute top-3 right-0 z-20 flex w-[85%] justify-end">
+      <AnimateTransition enter-name="slideInRight" out-name="fadeOut" speed="faster">
+        <div v-show="isNotificationShow" class="h-10 px-4">
           <div
-            class="flex h-full flex-1 items-center justify-center rounded-2xl bg-purple-linear px-4 py-3.5"
+            :class="colors[type]"
+            class="flex h-full flex-1 items-center justify-center rounded-2xl px-4 py-3.5"
           >
             <div class="flex h-full flex-1 items-center justify-center">
               <p class="text-md text-right leading-none text-white">

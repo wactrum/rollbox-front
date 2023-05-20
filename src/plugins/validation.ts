@@ -19,5 +19,9 @@ export default defineNuxtPlugin(() => {
       email: 'Некорректный Email адрес',
       min: (params) => `Не менее ${params.min} символов`,
     },
+    number: {
+      positive: 'Поле должно быть положительным числом',
+      integer: 'Поле должно быть целым числом',
+    },
   })
 })

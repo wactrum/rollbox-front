@@ -29,8 +29,6 @@ const { data: paginatedProducts } = await getProducts({
   },
 })
 
-const { data: categories } = await getCategories({ asyncDataOptions: { lazy: true } })
-
 const onChangePage = (number: number) => {
   page.value = number
 }
@@ -44,10 +42,16 @@ const onUpdateClick = (item: IProduct) => {
     Object.assign(item, data)
   })
 }
+
+const onCreateClick = () => {
+  showModal(ModalProductCreate).onOk((data) => {
+    paginatedProducts?.value?.data.push(data)
+  })
+}
 </script>
 
 <template>
-  <div class="px-2 sm:px-4 lg:px-6">
+  <div class="flex px-2 sm:px-4 lg:px-6 overflow-hidden">
     <Table
       :columns="columns"
       :rows="paginatedProducts?.data ?? []"
@@ -65,6 +69,7 @@ const onUpdateClick = (item: IProduct) => {
             <button
               type="button"
               class="inline-flex items-center justify-center rounded-md border border-transparent bg-orange-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 sm:w-auto"
+              @click="onCreateClick"
             >
               Добавить продукт
             </button>

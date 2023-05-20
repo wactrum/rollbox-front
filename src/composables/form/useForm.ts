@@ -20,7 +20,6 @@ export default <
   options: IUseFormOptions<SubmitValues, ReturnValues, ErrorType>
 ) => {
   const { formParams, params } = options
-  let serverErrors: Record<string, any> | null = null
 
   const pluckData = (data: any) => pluckValues(data, Object.keys(formParams.validationSchema ?? {}))
 
@@ -35,7 +34,7 @@ export default <
     Object.keys(formParams.validationSchema).map((el) => [el, useField(el)])
   )
 
-  const { validate, meta, setErrors, resetForm } = form
+  const { handleSubmit, meta, setErrors, setTouched, resetForm } = form
 
   const defaults: IDefaults<SubmitValues, ReturnValues, ErrorType> = {
     onError: (error: ErrorType) => {
@@ -49,8 +48,9 @@ export default <
           },
           {}
         )
-        serverErrors = errors
         setErrors(errors)
+      } else {
+        console.error(`[useForm] необработанная ошибка ${error}`)
       }
     },
 
@@ -61,25 +61,12 @@ export default <
         values: (params.pluckData ? pluckData(data) : data) as SubmitValues,
       })
     },
-
-    setErrors: (data: any) => {
-      serverErrors = data
-      setErrors(data)
-    },
   }
 
   const onError = (
     error: ErrorType,
-    data: any,
     ctx: IUseFormMethodsContext<SubmitValues, ReturnValues, ErrorType>
   ) => {
-    resetForm({
-      values: data,
-      touched: Object.keys(data).reduce((result: Record<string, boolean>, key) => {
-        result[key] = true
-        return result
-      }, {}),
-    })
     const method = params.onError ?? defaults.onError
     method(error, ctx)
   }
@@ -90,12 +77,8 @@ export default <
     defaults,
   }
 
-  const onSubmit = async () => {
-    const isValid = await validate({
-      mode: 'validated-only',
-    })
-    let values = form.values
-    if (isValid.valid && meta.value.dirty) {
+  const onSubmit = handleSubmit.withControlled(async (values) => {
+    if (meta.value.valid && meta.value.dirty) {
       try {
         if (params.sendModifiedOnly) {
           const changedFields = Object.keys(values).filter((el) => fields[el].meta.dirty)
@@ -105,21 +88,21 @@ export default <
         const data = await params.submitMethod(values)
 
         params.onSuccess && params.onSuccess(data ?? null, ctx)
-        serverErrors = null
 
         if (data) {
           onReset(data, ctx)
         }
       } catch (err) {
-        onError(err as ErrorType, values, ctx)
+        if (err instanceof TypeError) {
+          console.error(
+            `[useForm] использование в форме значений не определенных в схеме валидации - ${err.message}`
+          )
+        } else {
+          onError(err as ErrorType, ctx)
+        }
       }
-    } else if (serverErrors) {
-      setErrors(serverErrors)
-    } else if (!isValid.valid) {
-      setErrors(isValid.errors)
-      Object.keys(fields).forEach((el) => fields[el].setTouched(true))
     }
-  }
+  })
 
   const useFormField = <T = unknown>(
     name: MaybeRef<keyof SubmitValues | string>,
@@ -139,9 +122,6 @@ function pluckValues(obj: any, values: string[]): any {
 }
 
 // TYPES
-type GenericObject = Record<string, any>
-type FormErrors<TValues extends GenericObject> = Partial<Record<Path<TValues>, string | undefined>>
-
 export interface IUseFormMethodsContext<
   SubmitValues extends Record<string, any>,
   ReturnValues = SubmitValues,
@@ -158,7 +138,6 @@ interface IDefaults<
 > {
   onError: (error: ErrorType) => void
   onReset: (data: SubmitValues | ReturnValues) => void
-  setErrors: (data: FormErrors<SubmitValues>) => void
 }
 
 interface IFormOptions<TValues extends Record<string, any>> extends FormOptions<TValues> {

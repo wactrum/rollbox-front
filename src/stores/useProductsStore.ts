@@ -1,4 +1,10 @@
-import { ICategory, IProduct, ICreateCategory, ICreateProduct } from '~/domain/product'
+import {
+  ICategory,
+  IProduct,
+  ICreateCategory,
+  ICreateProduct,
+  IProductImage,
+} from '~/domain/product'
 import { components, operations } from '~/domain/schema'
 import { IPaginatedResponse } from '~/domain'
 
@@ -42,6 +48,16 @@ export const useProductsStore = defineStore('products', () => {
     })
   }
 
+  const uploadProductImage = (file: File) => {
+    const formData = new FormData()
+    formData.append('file', file)
+
+    return useApi<IProductImage>('/products/image/upload', {
+      method: 'POST',
+      body: formData,
+    })
+  }
+
   const updateProduct = (id: number, data: IUpdateProductBody) => {
     return useApi<IProduct>(`/products/${id}`, {
       method: 'PATCH',
@@ -63,6 +79,7 @@ export const useProductsStore = defineStore('products', () => {
     getCategoriesWithProducts,
     getProducts,
     createProduct,
+    uploadProductImage,
     updateProduct,
     deleteProduct,
   }

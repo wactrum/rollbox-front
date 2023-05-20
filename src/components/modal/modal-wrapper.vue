@@ -5,7 +5,7 @@
 
 import { TransitionChild, TransitionRoot, Dialog } from '@headlessui/vue'
 
-const props = defineProps<{
+defineProps<{
   modelValue: boolean
 }>()
 
@@ -13,7 +13,7 @@ const emit = defineEmits<{
   (event: 'update:modelValue', val: boolean): void
 }>()
 
-const handleKeyDown = (event) => {
+const handleKeyDown = (event: KeyboardEvent) => {
   if (event.key === 'Escape') {
     emit('update:modelValue', false)
   }

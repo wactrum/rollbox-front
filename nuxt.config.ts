@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
   srcDir: './src',
   imports: {
-    dirs: ['composables/**', 'components/**', 'utils/**', 'stores/**'],
+    dirs: ['composables/**', 'components/**', 'utils/**', 'stores/**', 'plugins/**'],
   },
   modules: [
     '@nuxtjs/tailwindcss',

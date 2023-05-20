@@ -46,11 +46,7 @@
             <div class="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
               <div class="flex-shrink-0 flex items-center px-4">
                 <div class="flex gap-2 items-center">
-                  <img
-                    class="h-8 w-auto"
-                    src="/logo.svg"
-                    alt="Workflow"
-                  />
+                  <img class="h-8 w-auto" src="/logo.svg" alt="Workflow" />
                   <p class="text-xl">Rollbox</p>
                 </div>
               </div>
@@ -141,11 +137,7 @@
           class="flex items-center justify-between bg-gray-50 border-b border-gray-200 px-4 py-1.5"
         >
           <div class="flex gap-2 items-center">
-            <img
-              class="h-8 w-auto"
-              src="/logo.svg"
-              alt="Workflow"
-            />
+            <img class="h-8 w-auto" src="/logo.svg" alt="Workflow" />
             <p class="text-xl">Rollbox</p>
           </div>
           <div>
@@ -160,13 +152,9 @@
           </div>
         </div>
       </div>
-      <div class="flex-1 relative z-0 flex overflow-hidden">
-        <main class="flex-1 relative z-0 overflow-y-auto focus:outline-none xl:order-last">
-          <!-- Start main area-->
-          <div class="absolute inset-0 py-6 px-4 sm:px-6 lg:px-8">
-            <slot />
-          </div>
-          <!-- End main area -->
+      <div class="flex-1 relative z-0 flex overflow-hidden max-h-screen">
+        <main class="flex-1 relative z-0 py-6 overflow-hidden px-4">
+          <slot />
         </main>
       </div>
     </div>

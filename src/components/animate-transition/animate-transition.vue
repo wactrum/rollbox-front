@@ -14,22 +14,22 @@ interface Props extends TransitionProps {
   withoutEnter?: boolean
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  enterName: 'fadeIn',
+  outName: 'fadeOut',
+  speed: 'faster',
+  withoutEnter: false,
+  withoutLeave: false,
+})
 
-const {
-  enterName = 'fadeIn',
-  outName = 'fadeOut',
-  speed = 'faster',
-  withoutEnter = false,
-  withoutLeave = false,
-} = toRefs(props)
+const { enterName, outName, speed, withoutEnter, withoutLeave } = toRefs(props)
 
 const enterActiveClass = computed(() =>
-  withoutEnter ? '' : `animate__animated animate__${speed} animate__${enterName}`
+  withoutEnter.value ? '' : `animate__animated animate__${speed.value} animate__${enterName.value}`
 )
 
 const leaveActiveClass = computed(() =>
-  withoutLeave ? '' : `animate__animated animate__${speed} animate__${outName}`
+  withoutLeave.value ? '' : `animate__animated animate__${speed.value} animate__${outName.value}`
 )
 </script>
 

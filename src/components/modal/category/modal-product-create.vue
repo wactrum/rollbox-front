@@ -1,32 +1,45 @@
 <script setup lang="ts">
 import { XMarkIcon } from '@heroicons/vue/20/solid'
-import { ICreateProduct, IProduct } from '~/domain/product'
+import { ICreateProduct, IProduct, IUpdateProduct } from '~/domain/product'
 import * as yup from 'yup'
+import SelectField from '~/components/select/selectField.vue'
 
 const props = defineProps<{
   initialData?: IProduct
 }>()
 
-const { createProduct, updateProduct } = useProductsStore()
+const { createProduct, uploadProductImage, updateProduct, getCategories } = useProductsStore()
+const { data: categories } = await getCategories({ asyncDataOptions: { lazy: true } })
 const { initialData } = toRefs(props)
 const id = initialData?.value?.id
 
 const { onDismiss, onClose, onOk } = useModalActions()
-const { onSubmit, useField } = useForm<ICreateProduct, IProduct>({
+const { onSubmit, useField } = useForm<IProduct>({
   formParams: {
     initialValues: initialData?.value,
     validationSchema: {
       name: yup.string().required(),
-      price: yup.number().required(),
+      price: yup.number().integer().positive().min(1).required(),
       description: yup.string().required(),
-      discount: yup.number().required(),
+      discount: yup.number().integer().positive().nullable(),
       categoryId: yup.number().required(),
+      productImage: yup.mixed().required(),
     },
   },
   params: {
     submitMethod: (data) => {
-      if (id) return updateProduct(id, data)
-      return createProduct(data)
+      const { productImage, ...other } = data
+      const form: IUpdateProduct | ICreateProduct = {
+        ...other,
+        productImageId: productImage?.id,
+      }
+
+      if (id) {
+        return updateProduct(id, form)
+      } else {
+        if (!productImage?.id) throw new Error('[ModalProductCreate]: not found productImage')
+        return createProduct(form as ICreateProduct)
+      }
     },
     onSuccess: (data) => onOk(data),
     pluckData: true,
@@ -34,11 +47,18 @@ const { onSubmit, useField } = useForm<ICreateProduct, IProduct>({
   },
 })
 
+const imageField = useField('productImage')
 const nameField = useField('name')
 const descriptionField = useField('description')
 const priceField = useField('price')
 const discountField = useField('discount')
 const categoryField = useField('categoryId')
+
+const onImageCrop = async (image?: File | null) => {
+  if (image) {
+    imageField.value.value = await uploadProductImage(image)
+  }
+}
 </script>
 
 <template>
@@ -57,6 +77,15 @@ const categoryField = useField('categoryId')
     <form class="space-y-6">
       <div class="grid grid-cols-4 gap-6">
         <div class="col-span-4">
+          <ImageCropper max-size-mb="1" @update:model-value="onImageCrop">
+            <nuxt-img v-if="initialData?.productImage" :src="initialData?.productImage?.path" />
+            <div v-else class="bg-gray-200 aspect-[16/9] w-full flex justify-center items-center">
+              <span class="text-gray-600">Нажмите, чтобы загрузить изображение</span>
+            </div>
+          </ImageCropper>
+        </div>
+
+        <div class="col-span-4">
           <InputField
             :field="nameField"
             type="text"
@@ -66,9 +95,14 @@ const categoryField = useField('categoryId')
           />
         </div>
 
+        <div class="col-span-4 sm:col-span-4">
+          <SelectField label="Категория" :field="categoryField" :options="categories" map />
+        </div>
+
         <div class="col-span-3 sm:col-span-2">
           <InputField
             :field="priceField"
+            is-number
             label="Цена"
             class="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full sm:text-sm border border-gray-300"
             placeholder="100"
@@ -82,6 +116,7 @@ const categoryField = useField('categoryId')
         <div class="col-span-3 sm:col-span-2">
           <InputField
             :field="discountField"
+            is-number
             label="Скидка"
             class="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full sm:text-sm border border-gray-300"
             placeholder="100"
