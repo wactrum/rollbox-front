@@ -23,6 +23,11 @@ const emit = defineEmits<{
   (event: 'changePage', page: number): void
 }>()
 
+const sort = defineModel<{
+  name: string
+  order: number | null
+} | null>('sort')
+
 const { meta } = toRefs(props)
 
 const pagination = computed(() => {
@@ -50,6 +55,24 @@ const prevPage = () => {
     emit('changePage', props.meta.page - 1)
   }
 }
+
+const onSortClick = (col: IColumn) => {
+  const current = sort.value
+  let order: number | null = 1
+  console.warn(current)
+
+  if (current && current.name === col.name) {
+    if (current.order === 0) {
+      sort.value = null
+      return
+    } else order = 0
+  }
+
+  sort.value = {
+    name: col.name,
+    order,
+  }
+}
 </script>
 
 <template>
@@ -65,7 +88,7 @@ const prevPage = () => {
       </div>
     </slot>
     <div class="flex-col hidden md:flex w-full h-full">
-      <div class="mt-8 flex flex-grow overflow-auto">
+      <div class="mt-8 flex overflow-auto">
         <table
           class="min-w-full flex-grow divide-y dark:divide-stone-500 divide-gray-300 dark:bg-neutral-800"
         >
@@ -79,13 +102,20 @@ const prevPage = () => {
                       class="sticky bg-gray-50 dark:bg-stone-900 dark:text-gray-300 top-0 group py-4 px-4 text-left text-sm font-semibold text-gray-900"
                       :class="[{ 'cursor-pointer': column.sortable }]"
                     >
-                      <div v-if="column.title" class="flex">
+                      <div v-if="column.title" class="flex" @click="onSortClick(column)">
                         <span>{{ column.title }}</span>
                         <span
                           v-if="column.sortable"
-                          class="invisible ml-2 flex-none rounded text-gray-400 group-hover:visible group-focus:visible"
+                          :class="[column.name === sort?.name ? 'visible' : 'invisible']"
+                          class="ml-2 flex-none rounded text-gray-400 group-hover:visible group-focus:visible"
                         >
-                          <ChevronDownIcon class="h-5 w-5" aria-hidden="true" />
+                          <ChevronDownIcon
+                            class="h-5 w-5 transition duration-300"
+                            aria-hidden="true"
+                            :class="[
+                              { 'rotate-180': column.name === sort?.name && sort.order === 1 },
+                            ]"
+                          />
                         </span>
                       </div>
                     </th>
@@ -107,6 +137,13 @@ const prevPage = () => {
               </template>
             </tr>
           </tbody>
+
+          <div
+            v-if="!rows?.length"
+            class="absolute pt-8 flex left-[50%] -translate-x-[50%] dark:text-white border-none divide-none"
+          >
+            Нет данных
+          </div>
         </table>
       </div>
       <div class="flex w-full">

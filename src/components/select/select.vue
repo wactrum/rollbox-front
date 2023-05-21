@@ -6,7 +6,7 @@ import {
   ListboxOption,
   ListboxOptions,
 } from '@headlessui/vue'
-import { ChevronUpDownIcon, CheckIcon } from '@heroicons/vue/24/solid'
+import { ChevronUpDownIcon, CheckIcon, XCircleIcon } from '@heroicons/vue/24/solid'
 import { ref, watchEffect } from 'vue'
 
 defineOptions({
@@ -17,7 +17,7 @@ const props = withDefaults(
   defineProps<{
     label?: string
     modelValue?: any
-    options?: any[]
+    options?: any[] | null
     optionsValue?: string
     optionsLabel?: string
     map?: boolean
@@ -55,22 +55,29 @@ const selected = computed<any>({
 </script>
 
 <template>
-  <Listbox v-model="selected" as="div">
+  <Listbox v-model="selected" as="div" v-bind="$attrs">
     <ListboxLabel v-if="label" class="block text-sm font-medium text-gray-700 dark:text-gray-200">
       {{ label }}
     </ListboxLabel>
     <div class="mt-1 relative">
       <ListboxButton
-        class="bg-white relative w-full border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500 sm:text-sm dark:bg-slate-600 dark:border-slate-500 dark:text-gray-200"
+        class="bg-white relative w-full border border-gray-300 rounded-md shadow-sm pl-3 pr-14 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500 sm:text-sm dark:bg-slate-600 dark:border-slate-500 dark:text-gray-200"
       >
         <slot name="selectedValue" :value="selected">
           <span v-if="selected" class="block truncate">{{ selected[optionsLabel ?? 'name'] }}</span>
           <span v-else class="block truncate">-</span>
-          <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+          <span class="absolute inset-y-0 right-6 flex items-center pr-2 pointer-events-none">
             <ChevronUpDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
           </span>
         </slot>
       </ListboxButton>
+      <button
+        type="button"
+        class="absolute inset-y-0 right-0 flex items-center pr-2"
+        @click="selected = undefined"
+      >
+        <XCircleIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
+      </button>
 
       <transition
         enter-active-class="transition duration-200 ease-out"
@@ -92,7 +99,9 @@ const selected = computed<any>({
           >
             <li
               :class="[
-                active ? 'text-white bg-orange-600' : 'text-gray-900 dark:bg-slate-600 dark:text-gray-200',
+                active
+                  ? 'text-white bg-orange-600'
+                  : 'text-gray-900 dark:bg-slate-600 dark:text-gray-200',
                 'cursor-default select-none relative py-2 pl-3 pr-9',
               ]"
             >

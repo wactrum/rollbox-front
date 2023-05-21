@@ -47,6 +47,13 @@ export default defineNuxtConfig({
   experimental: {
     typedPages: true,
   },
+  vite: {
+    vue: {
+      script: {
+        defineModel: true,
+      },
+    },
+  },
   // devtools: {
   //   enabled: true,
   // },
