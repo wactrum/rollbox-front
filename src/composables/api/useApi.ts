@@ -57,11 +57,37 @@ const createOptions = (
 ): Options => {
   const baseURL = options?.baseURL ?? context.config.public.apiUrl
 
+  const unRefOptions = validateParams({ ...reactive({ ...options }) })
+
   return {
     url,
     baseURL,
     onRequest,
-    ...reactive({ ...options }),
+    ...unRefOptions,
+  }
+}
+
+const validateParams = (options?: NitroFetchOptions<any>) => {
+  if (!options) return {}
+
+  const deleteEmpty = (data: any) =>
+    Object.entries(data || {}).reduce((acc: any, [key, value]) => {
+      if (value !== '' && value !== undefined) {
+        acc[key] = value
+      }
+      return acc
+    }, {})
+
+  let query = options.query
+  let params = options.params
+
+  query = query ? deleteEmpty(query) : query
+  params = params ? deleteEmpty(params) : params
+
+  return {
+    ...options,
+    query,
+    params,
   }
 }
 

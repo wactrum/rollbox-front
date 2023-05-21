@@ -37,22 +37,24 @@ provide(NotificationProviderKey, {
   <div>
     <slot />
 
-    <div class="absolute top-3 right-0 z-20 flex w-[85%] justify-end">
-      <AnimateTransition enter-name="slideInRight" out-name="fadeOut" speed="faster">
-        <div v-show="isNotificationShow" class="h-10 px-4">
-          <div
-            :class="colors[type]"
-            class="flex h-full flex-1 items-center justify-center rounded-2xl px-4 py-3.5"
-          >
-            <div class="flex h-full flex-1 items-center justify-center">
-              <p class="text-md text-right leading-none text-white">
-                {{ notificationText }}
-              </p>
+    <ClientOnly>
+      <div class="absolute top-3 right-0 z-20 flex w-[85%] justify-end">
+        <AnimateTransition enter-name="slideInRight" out-name="fadeOut" speed="faster">
+          <div v-show="isNotificationShow" class="h-10 px-4">
+            <div
+              :class="colors[type]"
+              class="flex h-full flex-1 items-center justify-center rounded-2xl px-4 py-3.5"
+            >
+              <div class="flex h-full flex-1 items-center justify-center">
+                <p class="text-md text-right leading-none text-white">
+                  {{ notificationText }}
+                </p>
+              </div>
             </div>
           </div>
-        </div>
-      </AnimateTransition>
-    </div>
+        </AnimateTransition>
+      </div>
+    </ClientOnly>
   </div>
 </template>
 

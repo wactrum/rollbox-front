@@ -24,10 +24,8 @@
               autocomplete="phone"
               class="pl-8 outline-none focus:border-orange-500 flex-1 block w-full sm:text-sm border border-gray-300"
             >
-              <template #label>
-                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <span>+7</span>
-                </div>
+              <template #before>
+                <span>+7</span>
               </template>
             </InputField>
           </div>
@@ -111,7 +109,7 @@ const { useField, onSubmit } = useForm<ISignForm>({
       ctx.defaults.onError(error)
 
       if (error.statusCode === 401) {
-        ctx.defaults.setErrors({
+        ctx.form.setErrors({
           phone: 'Неправильный номер телефона или пароль',
         })
       }

@@ -88,11 +88,13 @@
     <div class="hidden lg:flex lg:flex-shrink-0">
       <div class="flex flex-col w-64">
         <!-- Sidebar component, swap this element with another sidebar if you like -->
-        <div class="flex-1 flex flex-col min-h-0 border-r border-gray-200 bg-gray-100">
+        <div
+          class="flex-1 flex flex-col min-h-0 border-r border-gray-200 dark:border-stone-500 bg-gray-100 dark:bg-gray-800"
+        >
           <div class="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
             <div class="flex items-center flex-shrink-0 px-4">
               <img src="/logo.svg" class="w-8 h-8" />
-              <p class="text-xl ml-2">Rollbox</p>
+              <p class="text-xl ml-2 dark:text-white">Rollbox</p>
             </div>
             <nav class="mt-5 flex-1" aria-label="Sidebar">
               <div class="px-2 space-y-1">
@@ -100,16 +102,18 @@
                   v-for="item in navigation"
                   :key="item.name"
                   :to="item.to"
-                  active-class="bg-gray-200 text-gray-900"
+                  active-class="bg-gray-200 text-gray-900 dark:bg-gray-600"
                   :class="[
-                    'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
+                    'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-100',
                     'group flex items-center px-2 py-2 text-sm font-medium rounded-md',
                   ]"
                 >
                   <component
                     :is="item.icon"
                     :class="[
-                      item.current ? 'text-gray-500' : 'text-gray-400 group-hover:text-gray-500',
+                      item.current
+                        ? 'text-gray-500'
+                        : 'text-gray-400 group-hover:text-gray-500 dark:group-hover:text-gray-50',
                       'mr-3 h-6 w-6',
                     ]"
                     aria-hidden="true"
@@ -119,10 +123,10 @@
               </div>
             </nav>
           </div>
-          <div class="flex-shrink-0 flex border-t border-gray-200 p-4">
+          <div class="flex-shrink-0 flex border-t dark:border-stone-500 border-gray-200 p-4">
             <button
               type="button"
-              class="flex gap-3 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
+              class="flex gap-3 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100 dark:hover:bg-gray-600 p-4 rounded-md dark:text-gray-300 dark:hover:text-gray-200"
             >
               <ArrowLeftOnRectangleIcon class="h-6 w-6" aria-hidden="true" />
               Выйти
@@ -152,7 +156,7 @@
           </div>
         </div>
       </div>
-      <div class="flex-1 relative z-0 flex overflow-hidden max-h-screen">
+      <div class="flex-1 relative z-0 flex max-h-screen dark:bg-slate-800">
         <main class="flex-1 relative z-0 py-6 overflow-hidden px-4">
           <slot />
         </main>
@@ -175,6 +179,7 @@ import {
   ShieldCheckIcon,
 } from '@heroicons/vue/24/outline'
 import { ArrowLeftOnRectangleIcon } from '@heroicons/vue/24/solid'
+import { usePreferredDark } from '@vueuse/core'
 
 const navigation = [
   { name: 'Главная', to: { name: 'admin' }, icon: HomeIcon, current: true },
@@ -186,6 +191,13 @@ const navigation = [
 ]
 
 const sidebarOpen = ref(false)
+const isDark = usePreferredDark()
+
+useHead({
+  bodyAttrs: {
+    class: isDark.value ? 'dark' : '',
+  },
+})
 </script>
 
 <style lang="scss">

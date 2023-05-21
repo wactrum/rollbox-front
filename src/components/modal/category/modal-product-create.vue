@@ -9,7 +9,7 @@ const props = defineProps<{
 }>()
 
 const { createProduct, uploadProductImage, updateProduct, getCategories } = useProductsStore()
-const { data: categories } = await getCategories({ asyncDataOptions: { lazy: true } })
+const { data: categories } = await getCategories()
 const { initialData } = toRefs(props)
 const id = initialData?.value?.id
 
@@ -62,10 +62,10 @@ const onImageCrop = async (image?: File | null) => {
 </script>
 
 <template>
-  <Modal>
+  <Modal size="xl">
     <template #title>
       <div class="flex relative justify-between">
-        <p class="text-center text-base leading-normal text-black">
+        <p class="text-center text-base leading-normal text-black dark:text-gray-200">
           {{ initialData?.id ? 'Обновить продукт' : 'Добавить продукт' }}
         </p>
         <button class="absolute flex items-start right-[-15px] top-[-15px]" @click="onClose">
@@ -76,16 +76,16 @@ const onImageCrop = async (image?: File | null) => {
 
     <form class="space-y-6">
       <div class="grid grid-cols-4 gap-6">
-        <div class="col-span-4">
+        <div class="col-span-4 row-span-2 sm:col-span-2">
           <ImageCropper max-size-mb="1" @update:model-value="onImageCrop">
             <nuxt-img v-if="initialData?.productImage" :src="initialData?.productImage?.path" />
             <div v-else class="bg-gray-200 aspect-[16/9] w-full flex justify-center items-center">
-              <span class="text-gray-600">Нажмите, чтобы загрузить изображение</span>
+              <span class="text-gray-600 text-center">Нажмите, чтобы загрузить изображение</span>
             </div>
           </ImageCropper>
         </div>
 
-        <div class="col-span-4">
+        <div class="col-span-4 sm:col-span-2">
           <InputField
             :field="nameField"
             type="text"
@@ -95,11 +95,11 @@ const onImageCrop = async (image?: File | null) => {
           />
         </div>
 
-        <div class="col-span-4 sm:col-span-4">
+        <div class="col-span-4 sm:col-span-2">
           <SelectField label="Категория" :field="categoryField" :options="categories" map />
         </div>
 
-        <div class="col-span-3 sm:col-span-2">
+        <div class="col-span-2 sm:col-span-2">
           <InputField
             :field="priceField"
             is-number
@@ -113,7 +113,7 @@ const onImageCrop = async (image?: File | null) => {
           </InputField>
         </div>
 
-        <div class="col-span-3 sm:col-span-2">
+        <div class="col-span-2 sm:col-span-2">
           <InputField
             :field="discountField"
             is-number

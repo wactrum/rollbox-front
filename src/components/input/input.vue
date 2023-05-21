@@ -2,21 +2,24 @@
   <div>
     <label class="flex flex-col gap-1 w-full shadow-sm">
       <slot name="label">
-        <span v-if="label" class="text-black">{{ label }}</span>
+        <span v-if="label" class="text-black dark:text-gray-200">{{ label }}</span>
       </slot>
       <span class="relative">
-        <span v-if="$slots['before']" class="absolute left-0 bottom-0 flex items-center h-full">
-          <slot name="after" />
+        <span
+          v-if="$slots['before']"
+          class="absolute pl-3 z-10 left-0 bottom-0 flex items-center h-full"
+        >
+          <slot name="before" />
         </span>
         <input
           v-bind="$attrs"
           v-model="modelValue"
-          class="p-2 rounded-xl"
+          class="p-2 rounded-xl dark:bg-slate-600 dark:border-slate-500 dark:text-gray-200"
           @input="updateModelValue"
         />
         <span
           v-if="$slots['after']"
-          class="absolute right-0 bottom-0 h-full pr-3 text-sm flex items-center"
+          class="absolute right-0 bottom-0 h-full pr-3 text-sm flex items-center dark:text-gray-200"
         >
           <slot name="after" />
         </span>

@@ -11,16 +11,15 @@ watch(route, () => {
   clearModal()
 })
 
-type ActionResolver = (data: any) => void
 const initialComponent = 'span'
 
 // Data
 let isShow = ref(false)
 let props = ref<any>(null)
 let component = shallowRef<string | Component>('span')
-let closeCb: (data: any) => void | null,
-  okCb: (data: any) => void | null,
-  dismissCb: (data: any) => void | null
+let closeCb: ((data: any) => void) | null,
+  okCb: ((data: any) => void) | null,
+  dismissCb: ((data: any) => void) | null
 
 // Actions
 const clearModal = () => {
@@ -35,7 +34,9 @@ const clearModal = () => {
 const onShow = async (data: Component | Promise<{ default: Component }>) => {
   const result = await data
   component.value = 'default' in result ? result.default : result
-  isShow.value = true
+  await nextTick(() => {
+    isShow.value = true
+  })
 }
 
 const onClose = (data: any) => {
@@ -92,7 +93,7 @@ provide(ModalActionsProviderKey, {
     <ModalWrapper v-model="isShow">
       <Suspense>
         <Component :is="component" v-bind="props" />
-        <template #fallback> Loading... </template>
+        <template #fallback>...</template>
       </Suspense>
     </ModalWrapper>
   </ClientOnly>

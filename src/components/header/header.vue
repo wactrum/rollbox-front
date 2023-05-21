@@ -58,7 +58,7 @@ const isAuth = ref(true)
         </div>
         <div class="flex-1 flex items-center justify-center px-2 lg:ml-6 lg:justify-end">
           <div class="max-w-lg w-full lg:max-w-xs">
-            <label for="search" class="sr-only">Search</label>
+            <label for="search" class="sr-only">Поиск по товарам</label>
             <div class="relative">
               <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <SearchIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />

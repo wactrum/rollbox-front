@@ -64,60 +64,59 @@ const prevPage = () => {
         </div>
       </div>
     </slot>
-    <div class="flex w-full">
-      <div class="hidden md:flex w-full">
-        <div class="mt-8 flex flex-col w-full">
-          <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
-            <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-              <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-                <table class="min-w-full divide-y divide-gray-300">
-                  <thead class="bg-gray-50">
-                    <slot name="table-head">
-                      <tr>
-                        <template v-for="(column, index) in columns" :key="index">
-                          <slot :name="`header-${column.name}`" :column="column">
-                            <th
-                              scope="col"
-                              class="group py-4 px-4 text-left text-sm font-semibold text-gray-900"
-                              :class="[{ 'cursor-pointer': column.sortable }]"
-                            >
-                              <div v-if="column.title" class="flex">
-                                <span>{{ column.title }}</span>
-                                <span
-                                  v-if="column.sortable"
-                                  class="invisible ml-2 flex-none rounded text-gray-400 group-hover:visible group-focus:visible"
-                                >
-                                  <ChevronDownIcon class="h-5 w-5" aria-hidden="true" />
-                                </span>
-                              </div>
-                            </th>
-                          </slot>
-                        </template>
-                      </tr>
-                    </slot>
-                  </thead>
-                  <tbody class="divide-y divide-gray-200 bg-white">
-                    <tr v-for="(row, rowIndex) in rows" :key="rowIndex" class="group">
-                      <template v-for="(column, columnIndex) in columns" :key="columnIndex">
-                        <slot :name="`cell-${column.name}`" :item="row" :column="column">
-                          <td v-if="column.key" class="px-4 py-4 text-sm text-gray-500">
-                            {{ row[column.key] }}
-                          </td>
-                        </slot>
-                      </template>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-          <nav
-            v-if="pagination && meta && meta?.pageCount > 1"
-            class="border-t border-gray-200 px-4 flex items-center justify-between sm:px-0"
+    <div class="flex-col hidden md:flex w-full h-full">
+      <div class="mt-8 flex flex-grow overflow-auto">
+        <table
+          class="min-w-full flex-grow divide-y dark:divide-stone-500 divide-gray-300 dark:bg-neutral-800"
+        >
+          <thead>
+            <slot name="table-head">
+              <tr>
+                <template v-for="(column, index) in columns" :key="index">
+                  <slot :name="`header-${column.name}`" :column="column">
+                    <th
+                      scope="col"
+                      class="sticky bg-gray-50 dark:bg-stone-900 dark:text-gray-300 top-0 group py-4 px-4 text-left text-sm font-semibold text-gray-900"
+                      :class="[{ 'cursor-pointer': column.sortable }]"
+                    >
+                      <div v-if="column.title" class="flex">
+                        <span>{{ column.title }}</span>
+                        <span
+                          v-if="column.sortable"
+                          class="invisible ml-2 flex-none rounded text-gray-400 group-hover:visible group-focus:visible"
+                        >
+                          <ChevronDownIcon class="h-5 w-5" aria-hidden="true" />
+                        </span>
+                      </div>
+                    </th>
+                  </slot>
+                </template>
+              </tr>
+            </slot>
+          </thead>
+          <tbody
+            class="divide-y divide-gray-200 dark:divide-stone-500 text-gray-500 dark:text-gray-300"
           >
+            <tr v-for="(row, rowIndex) in rows" :key="rowIndex" class="group">
+              <template v-for="(column, columnIndex) in columns" :key="columnIndex">
+                <slot :name="`cell-${column.name}`" :item="row" :column="column">
+                  <td v-if="column.key" class="px-4 py-4 text-sm">
+                    {{ row[column.key] }}
+                  </td>
+                </slot>
+              </template>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="flex w-full">
+        <nav
+          class="h-[100px] w-full border-t dark:border-stone-500 border-gray-200 px-4 flex items-start justify-between sm:px-0"
+        >
+          <template v-if="pagination && meta && meta?.pageCount > 1">
             <div class="-mt-px w-0 flex-1 flex">
               <button
-                class="border-t-2 border-transparent pt-4 pr-1 inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700"
+                class="border-t-2 border-transparent pt-4 pr-1 inline-flex items-center text-sm font-medium text-gray-500 dark:text-gray-400 dark:hover:text-gray-100 hover:text-gray-700"
                 @click="prevPage"
               >
                 <ArrowLeftIcon class="mr-3 h-5 w-5 text-gray-400" aria-hidden="true" />
@@ -151,7 +150,7 @@ const prevPage = () => {
                 :class="[
                   page === meta?.page
                     ? 'border-orange-500 text-orange-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
+                    : 'border-transparent text-gray-500 dark:text-gray-300 dark:hover:text-gray-100 hover:text-gray-700 hover:border-gray-300 dark:hover:border-gray-100',
                 ]"
                 @click="emit('changePage', page)"
               >
@@ -179,55 +178,55 @@ const prevPage = () => {
             </div>
             <div class="-mt-px w-0 flex-1 flex justify-end">
               <button
-                class="border-t-2 border-transparent pt-4 pl-1 inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700"
+                class="border-t-2 border-transparent pt-4 pl-1 inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-100"
                 @click="nextPage"
               >
                 Следующая
                 <ArrowRightIcon class="ml-3 h-5 w-5 text-gray-400" aria-hidden="true" />
               </button>
             </div>
-          </nav>
-        </div>
+          </template>
+        </nav>
       </div>
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:hidden py-6 w-full">
-        <div
-          v-for="row in rows"
-          :key="row.id"
-          class="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400"
-        >
-          <div class="flex-1 min-w-0">
-            <slot name="grid-item" :item="row">
-              <div class="flex justify-between">
-                <div class="flex items-center justify-center flex-col">
-                  <p
-                    v-for="column in columns"
-                    :key="column.name"
-                    class="text-sm font-medium text-gray-900"
-                  >
-                    {{ row[column.key] }}
-                  </p>
-                </div>
-
-                <div class="flex gap-2">
-                  <button
-                    type="button"
-                    class="bg-gray-100 p-2 rounded-lg hover:bg-gray-200"
-                    @click="emit('updateClick', row)"
-                  >
-                    <PencilSquareIcon class="text-gray-500 w-4 h-4" />
-                  </button>
-
-                  <button
-                    type="button"
-                    class="bg-red-100 p-2 rounded-lg hover:bg-red-200"
-                    @click="emit('deleteClick', row)"
-                  >
-                    <TrashIcon class="text-red-500 w-4 h-4" />
-                  </button>
-                </div>
+    </div>
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:hidden py-6 w-full">
+      <div
+        v-for="row in rows"
+        :key="row.id"
+        class="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400"
+      >
+        <div class="flex-1 min-w-0">
+          <slot name="grid-item" :item="row">
+            <div class="flex justify-between">
+              <div class="flex items-center justify-center flex-col">
+                <p
+                  v-for="column in columns"
+                  :key="column.name"
+                  class="text-sm font-medium text-gray-900"
+                >
+                  {{ row[column.key] }}
+                </p>
               </div>
-            </slot>
-          </div>
+
+              <div class="flex gap-2">
+                <button
+                  type="button"
+                  class="bg-gray-100 p-2 rounded-lg hover:bg-gray-200"
+                  @click="emit('updateClick', row)"
+                >
+                  <PencilSquareIcon class="text-gray-500 w-4 h-4" />
+                </button>
+
+                <button
+                  type="button"
+                  class="bg-red-100 p-2 rounded-lg hover:bg-red-200"
+                  @click="emit('deleteClick', row)"
+                >
+                  <TrashIcon class="text-red-500 w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </slot>
         </div>
       </div>
     </div>
@@ -236,10 +235,10 @@ const prevPage = () => {
 
 <style lang="scss">
 .table {
-  @apply w-full;
+  @apply w-full h-full flex flex-col;
 
   td {
-    @apply pl-4 text-sm text-gray-500 break-words whitespace-break-spaces;
+    @apply pl-4 text-sm text-gray-500 dark:text-gray-200 break-words whitespace-break-spaces;
   }
 }
 </style>

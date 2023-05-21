@@ -129,65 +129,66 @@ const productsChart = {
 </script>
 
 <template>
-  <div>
-    <h3 class="text-2xl leading-6 font-medium text-gray-900">Последние 30 дней</h3>
-    <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
-      <div
-        v-for="item in stats"
-        :key="item.name"
-        class="px-4 py-5 bg-white shadow rounded-lg overflow-hidden sm:p-6"
-      >
-        <dt class="text-sm font-medium text-gray-500 truncate">
-          {{ item.name }}
-        </dt>
-        <dd class="mt-1 text-3xl font-semibold text-gray-900">
-          {{ item.stat }}
-        </dd>
-      </div>
-    </dl>
-  </div>
-
-  <section class="pt-6">
-    <div class="container mx-auto">
-      <div class="bg-white rounded">
-        <div class="flex flex-wrap items-center py-5">
-          <h3 class="text-2xl leading-6 font-medium text-gray-900">
-            Статистика по заказам за текущую неделю
-          </h3>
+  <div class="flex h-full flex-col">
+    <div>
+      <h3 class="text-2xl leading-6 font-medium text-gray-900">Последние 30 дней</h3>
+      <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
+        <div
+          v-for="item in stats"
+          :key="item.name"
+          class="px-4 py-5 bg-white shadow rounded-lg overflow-hidden sm:p-6"
+        >
+          <dt class="text-sm font-medium text-gray-500 truncate">
+            {{ item.name }}
+          </dt>
+          <dd class="mt-1 text-3xl font-semibold text-gray-900">
+            {{ item.stat }}
+          </dd>
         </div>
-        <ClientOnly>
-          <VueApexCharts
-            type="bar"
-            :options="daysChart.options"
-            :series="daysChart.series"
-            height="200"
-          />
-        </ClientOnly>
-        <div class="chart p-6" data-type="columns"></div>
-      </div>
+      </dl>
     </div>
-  </section>
 
-  <div class="flex xl:grid xl:grid-cols-2 w-full">
-    <section class="pt-6 w-full">
+    <section class="pt-6">
       <div class="container mx-auto">
         <div class="bg-white rounded">
           <div class="flex flex-wrap items-center py-5">
             <h3 class="text-2xl leading-6 font-medium text-gray-900">
-              Самые популярные продукты за 30 дней
+              Статистика по заказам за текущую неделю
             </h3>
           </div>
           <ClientOnly>
             <VueApexCharts
-              type="pie"
-              :options="productsChart.options"
-              :series="productsChart.series"
-              height="300"
+              type="bar"
+              :options="daysChart.options"
+              :series="daysChart.series"
+              height="200"
             />
           </ClientOnly>
-          <div class="chart p-6" data-type="columns"></div>
         </div>
       </div>
     </section>
+
+    <div class="flex xl:grid xl:grid-cols-2 w-full">
+      <section class="pt-6 w-full">
+        <div class="container mx-auto">
+          <div class="bg-white rounded">
+            <div class="flex flex-wrap items-center py-5">
+              <h3 class="text-2xl leading-6 font-medium text-gray-900">
+                Самые популярные продукты за 30 дней
+              </h3>
+            </div>
+            <ClientOnly>
+              <VueApexCharts
+                type="pie"
+                :options="productsChart.options"
+                :series="productsChart.series"
+                height="300"
+              />
+            </ClientOnly>
+            <div class="chart p-6" data-type="columns"></div>
+          </div>
+        </div>
+      </section>
+    </div>
   </div>
 </template>

@@ -56,12 +56,12 @@ const selected = computed<any>({
 
 <template>
   <Listbox v-model="selected" as="div">
-    <ListboxLabel v-if="label" class="block text-sm font-medium text-gray-700">
+    <ListboxLabel v-if="label" class="block text-sm font-medium text-gray-700 dark:text-gray-200">
       {{ label }}
     </ListboxLabel>
     <div class="mt-1 relative">
       <ListboxButton
-        class="bg-white relative w-full border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
+        class="bg-white relative w-full border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500 sm:text-sm dark:bg-slate-600 dark:border-slate-500 dark:text-gray-200"
       >
         <slot name="selectedValue" :value="selected">
           <span v-if="selected" class="block truncate">{{ selected[optionsLabel ?? 'name'] }}</span>
@@ -81,7 +81,7 @@ const selected = computed<any>({
         leave-to-class="transform scale-95 opacity-0"
       >
         <ListboxOptions
-          class="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm"
+          class="absolute z-10 mt-1 w-full bg-white dark:bg-slate-500 shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm"
         >
           <ListboxOption
             v-for="option in options"
@@ -92,7 +92,7 @@ const selected = computed<any>({
           >
             <li
               :class="[
-                active ? 'text-white bg-orange-600' : 'text-gray-900',
+                active ? 'text-white bg-orange-600' : 'text-gray-900 dark:bg-slate-600 dark:text-gray-200',
                 'cursor-default select-none relative py-2 pl-3 pr-9',
               ]"
             >
