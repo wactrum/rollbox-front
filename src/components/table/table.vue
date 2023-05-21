@@ -90,7 +90,7 @@ const onSortClick = (col: IColumn) => {
     <div class="flex-col hidden md:flex w-full h-full">
       <div class="mt-8 flex overflow-auto">
         <table
-          class="min-w-full flex-grow divide-y dark:divide-stone-500 divide-gray-300 dark:bg-neutral-800"
+          class="min-w-full divide-y dark:divide-stone-500 divide-gray-300 dark:bg-neutral-800"
         >
           <thead>
             <slot name="table-head">
@@ -273,6 +273,10 @@ const onSortClick = (col: IColumn) => {
 <style lang="scss">
 .table {
   @apply w-full h-full flex flex-col;
+
+  tr {
+    @apply max-h-16;
+  }
 
   td {
     @apply pl-4 text-sm text-gray-500 dark:text-gray-200 break-words whitespace-break-spaces;
