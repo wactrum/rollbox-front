@@ -97,6 +97,9 @@ export interface paths {
   "/products/image/upload": {
     post: operations["ProductsController_uploadImage"];
   };
+  "/products/admin": {
+    get: operations["ProductsController_findAllForAdmin"];
+  };
   "/products/{id}": {
     get: operations["ProductsController_findOne"];
     delete: operations["ProductsController_remove"];
@@ -806,6 +809,11 @@ export interface operations {
     };
   };
   CategoriesController_findAllWithProducts: {
+    parameters: {
+      query: {
+        search: string;
+      };
+    };
     responses: {
       200: {
         content: {
@@ -906,6 +914,32 @@ export interface operations {
       201: {
         content: {
           "application/json": Record<string, never>;
+        };
+      };
+    };
+  };
+  ProductsController_findAllForAdmin: {
+    parameters: {
+      query: {
+        /** @description Номер страницы */
+        page?: number;
+        /** @description Количество элементов на странице */
+        take?: number;
+        /** @description Порядок сортировки */
+        sortOrder?: "asc" | "desc";
+        /** @description Поле для сортировки */
+        sortBy?: string;
+        categoryId?: number;
+        search?: string;
+        showDeleted?: boolean;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["PaginatedResponseDto"] & {
+            data?: (components["schemas"]["ProductEntity"])[];
+          };
         };
       };
     };

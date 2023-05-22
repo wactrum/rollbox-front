@@ -3,6 +3,7 @@ import { IColumn } from '~/components/table/types'
 import ModalConfirm from '~/components/modal/modal-confirm.vue'
 import ModalCategoryCreate from '~/components/modal/category/modal-category-create.vue'
 import { ICategory } from '~/domain/product'
+import TableCellEdit from '~/components/table/cell/table-cell-edit.vue'
 
 definePageMeta({
   layout: 'admin',
@@ -73,21 +74,11 @@ const onDeleteClick = (item: any) => {
       </template>
 
       <template #cell-edit="{ item }">
-        <td
-          class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6"
-        >
-          <div
-            class="opacity-0 flex gap-2 justify-end group-hover:opacity-100 duration-300 transition-all"
-          >
-            <button class="text-gray-500 hover:text-gray-900" @click="onUpdateClick(item)">
-              Редактировать
-            </button>
-
-            <button class="text-red-500 hover:text-red-900" @click="onDeleteClick(item)">
-              Удалить
-            </button>
-          </div>
-        </td>
+        <TableCellEdit
+          :item="item"
+          @on-update-click="onUpdateClick"
+          @on-delete-click="onDeleteClick"
+        />
       </template>
     </Table>
   </div>

@@ -1,7 +1,7 @@
 import { acceptHMRUpdate } from 'pinia'
 import type { components } from '~/domain/schema'
 import type { IUser } from '~/domain/user'
-import { makeAsyncApiFn } from '~/composables/api/useApi'
+import { makeAsyncApiFn } from '~/composables/api/use-api'
 
 export const useUserStore = defineStore('user', () => {
   const user = useSCookie<IUser | null>('user', { default: () => null })

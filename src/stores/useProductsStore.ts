@@ -20,6 +20,9 @@ export const useProductsStore = defineStore('products', () => {
   const getCategories = makeAsyncApiFn<IGetCategoriesResponse>('/categories')
   const getCategoriesWithProducts = makeAsyncApiFn<IGetCategoriesResponse>('/categories/products')
   const getProducts = makeAsyncApiFn<IPaginatedResponse<IProduct>, IGetProductsParams>('/products')
+  const getAdminProducts = makeAsyncApiFn<IPaginatedResponse<IProduct>, IGetProductsParams>(
+    '/products/admin'
+  )
 
   const createCategory = (data: ICreateCategoryBody) => {
     return useApi<ICategory>('/categories', {
@@ -78,6 +81,7 @@ export const useProductsStore = defineStore('products', () => {
     deleteCategory,
     getCategoriesWithProducts,
     getProducts,
+    getAdminProducts,
     createProduct,
     uploadProductImage,
     updateProduct,
