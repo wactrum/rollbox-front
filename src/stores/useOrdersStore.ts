@@ -6,8 +6,10 @@ type IGetOrdersParams = operations['OrdersController_findAll']['parameters']['qu
 
 export const useOrdersStore = defineStore('orders', () => {
   const getOrders = makeAsyncApiFn<IPaginatedResponse<IOrder>, IGetOrdersParams>('/orders')
+  const getOrder = makeAsyncApiFnWithParams<IOrder, { id: number }>('/orders/{id}')
 
   return {
     getOrders,
+    getOrder,
   }
 })

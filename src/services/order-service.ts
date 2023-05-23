@@ -1,4 +1,10 @@
-import { IOrder, OrderStatusesEnum, OrderStatusesMap, OrderTypesMap } from '~/domain/order'
+import {
+  IOrder,
+  OrderStatusesEnum,
+  OrderStatusesMap,
+  OrderTypesEnum,
+  OrderTypesMap,
+} from '~/domain/order'
 import { format, intervalToDuration } from 'date-fns'
 
 export const formatOrders = (orders: IOrder[]) => {
@@ -41,3 +47,19 @@ export const formatOrder = (order: IOrder) => {
     }),
   }
 }
+
+export const OrderStatusesOptions = [
+  { name: OrderStatusesMap.get(OrderStatusesEnum.CREATED), value: OrderStatusesEnum.CREATED },
+  {
+    name: OrderStatusesMap.get(OrderStatusesEnum.IN_PROGRESS),
+    value: OrderStatusesEnum.IN_PROGRESS,
+  },
+  { name: OrderStatusesMap.get(OrderStatusesEnum.DELIVERED), value: OrderStatusesEnum.DELIVERED },
+  { name: OrderStatusesMap.get(OrderStatusesEnum.CANCELED), value: OrderStatusesEnum.CANCELED },
+  { name: OrderStatusesMap.get(OrderStatusesEnum.COMPLETED), value: OrderStatusesEnum.COMPLETED },
+]
+
+export const OrderTypesOptions = [
+  { name: OrderTypesMap.get(OrderTypesEnum.DELIVERY), value: OrderTypesEnum.DELIVERY },
+  { name: OrderTypesMap.get(OrderTypesEnum.PICKUP), value: OrderTypesEnum.PICKUP },
+]

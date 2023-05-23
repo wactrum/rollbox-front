@@ -370,6 +370,27 @@ export interface components {
       /** Format: date-time */
       createdAt: string;
     };
+    RetriveOrderEntity: {
+      /** @enum {string|null} */
+      paymentType: "UPON_RECEIPT_IN_CASH" | "UPON_RECEIPT_BY_CARD" | null;
+      /** @enum {string} */
+      status: "CREATED" | "IN_PROGRESS" | "DELIVERED" | "CANCELED" | "COMPLETED";
+      /** @enum {string} */
+      type: "PICKUP" | "DELIVERY";
+      deliveryLocation: components["schemas"]["DeliveryLocationEntity"];
+      products: components["schemas"]["ProductsOnOrdersEntity"];
+      orderCancellations?: components["schemas"]["ProductsOnOrdersEntity"] | null;
+      user: components["schemas"]["UserEntity"];
+      id: number;
+      userId: number;
+      deliveryLocationId: number | null;
+      location: string | null;
+      price: number;
+      /** Format: date-time */
+      updatedAt: string | null;
+      /** Format: date-time */
+      createdAt: string;
+    };
     CreateOrderItemsDto: {
       discount: number;
       price: number;
@@ -947,7 +968,7 @@ export interface operations {
   ProductsController_findOne: {
     parameters: {
       path: {
-        id: string;
+        id: number;
       };
     };
     responses: {
@@ -961,7 +982,7 @@ export interface operations {
   ProductsController_remove: {
     parameters: {
       path: {
-        id: string;
+        id: number;
       };
     };
     responses: {
@@ -971,7 +992,7 @@ export interface operations {
   ProductsController_update: {
     parameters: {
       path: {
-        id: string;
+        id: number;
       };
     };
     requestBody: {
@@ -1122,7 +1143,7 @@ export interface operations {
     responses: {
       200: {
         content: {
-          "application/json": components["schemas"]["OrderEntity"];
+          "application/json": components["schemas"]["RetriveOrderEntity"];
         };
       };
     };

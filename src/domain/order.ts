@@ -7,10 +7,15 @@ export type IUpdateOrder = components['schemas']['UpdateOrderDto']
 
 export enum OrderStatusesEnum {
   CREATED = 'CREATED',
-  IN_PROGRESS = 'CREATED',
+  IN_PROGRESS = 'IN_PROGRESS',
   DELIVERED = 'DELIVERED',
   CANCELED = 'CANCELED',
   COMPLETED = 'COMPLETED',
+}
+
+export enum OrderTypesEnum {
+  PICKUP = 'PICKUP',
+  DELIVERY = 'DELIVERY',
 }
 
 export const OrderStatusesMap = new Map<IOrder['status'], string>([

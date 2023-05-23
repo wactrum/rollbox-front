@@ -26,7 +26,6 @@ const columns: IColumn<IOrder>[] = [
 const search = ref()
 const page = ref(1)
 const sort = ref<{ name: string; order: number } | null>(null)
-const showDeleted = ref<boolean>(false)
 
 const { data: paginatedOrders } = await getOrders({
   options: {
@@ -48,10 +47,9 @@ const onChangePage = (number: number) => {
 }
 
 const showViewModal = (item: IOrder) => {
-  const order = paginatedOrders?.value?.data.find((el) => el.id === item.id)
   showModal(ModalOrder, {
     props: {
-      order,
+      orderId: item.id,
     },
   })
 }
@@ -69,17 +67,13 @@ const showViewModal = (item: IOrder) => {
   >
     <template #header-filters>
       <div class="w-full grid grid-cols-12 items-end gap-4">
-        <div class="col-span-12 sm:col-span-4 md:col-span-3">
+        <div class="col-span-12 sm:col-span-5 md:col-span-4">
           <InputSearch v-model="search" placeholder="Поиск по заказчику, адресу доставки" />
         </div>
 
         <!--        <div class="col-span-12 sm:col-span-4 md:col-span-3">-->
         <!--          <Select v-model="categoryId" label="Категория" :options="categories" map />-->
         <!--        </div>-->
-
-        <div class="col-span-12 sm:col-span-4 md:col-span-3 pb-2">
-          <Checkbox v-model="showDeleted" label="Показать удаленные" />
-        </div>
       </div>
     </template>
 
@@ -88,7 +82,7 @@ const showViewModal = (item: IOrder) => {
     </template>
 
     <template #cell-edit="{ item }">
-      <TableCellView v-if="!showDeleted" :item="item" @on-view-click="showViewModal(item)" />
+      <TableCellView :item="item" @on-view-click="showViewModal(item)" />
     </template>
   </Table>
 </template>

@@ -193,11 +193,11 @@ const navigation = [
 const sidebarOpen = ref(false)
 const isDark = usePreferredDark()
 
-useHead({
-  bodyAttrs: {
-    class: isDark.value ? 'dark' : '',
-  },
-})
+// useHead({
+//   bodyAttrs: {
+//     class: isDark.value ? 'dark' : '',
+//   },
+// })
 </script>
 
 <style lang="scss">
