@@ -12,13 +12,17 @@ type IGetProductsParams = operations['ProductsController_findAll']['parameters']
 type ICreateProductBody = ICreateProduct
 type IUpdateProductBody = components['schemas']['UpdateProductDto']
 
+type IGetCategoriesParams =
+  operations['CategoriesController_findAllWithProducts']['parameters']['query']
 type IGetCategoriesResponse = ICategory[]
 type ICreateCategoryBody = ICreateCategory
 type IUpdateCategoryBody = components['schemas']['UpdateCategoryDto']
 
 export const useProductsStore = defineStore('products', () => {
   const getCategories = makeAsyncApiFn<IGetCategoriesResponse>('/categories')
-  const getCategoriesWithProducts = makeAsyncApiFn<IGetCategoriesResponse>('/categories/products')
+  const getCategoriesWithProducts = makeAsyncApiFn<IGetCategoriesResponse, IGetCategoriesParams>(
+    '/categories/products'
+  )
   const getProducts = makeAsyncApiFn<IPaginatedResponse<IProduct>, IGetProductsParams>('/products')
   const getAdminProducts = makeAsyncApiFn<IPaginatedResponse<IProduct>, IGetProductsParams>(
     '/products/admin'

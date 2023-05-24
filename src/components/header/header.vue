@@ -9,7 +9,6 @@ import {
   MenuItems,
 } from '@headlessui/vue'
 import {
-  MagnifyingGlassIcon as SearchIcon,
   ShoppingCartIcon,
   RectangleStackIcon,
   UserIcon,
@@ -22,7 +21,14 @@ import {
   ListBulletIcon,
 } from '@heroicons/vue/24/outline'
 
-const isAuth = ref(true)
+const { isAuthorized, logOut } = useUserStore()
+
+const search = useState('search')
+
+const onLogout = async () => {
+  await logOut()
+  await navigateTo({ name: 'auth-sign-in' })
+}
 </script>
 
 <template>
@@ -48,7 +54,7 @@ const isAuth = ref(true)
               Корзина
             </a>
             <a
-              v-if="isAuth"
+              v-if="isAuthorized"
               href="#"
               class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
             >
@@ -58,46 +64,34 @@ const isAuth = ref(true)
         </div>
         <div class="flex-1 flex items-center justify-center px-2 lg:ml-6 lg:justify-end">
           <div class="max-w-lg w-full lg:max-w-xs">
-            <label for="search" class="sr-only">Поиск по товарам</label>
-            <div class="relative">
-              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <SearchIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
-              </div>
-              <input
-                id="search"
-                name="sushi-search"
-                class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
-                placeholder="Поиск"
-                type="search"
-                autocomplete="sushi-search"
-              />
-            </div>
+            <InputSearch v-model="search" />
           </div>
         </div>
         <div class="flex items-center lg:hidden">
           <!-- Mobile menu button -->
           <DisclosureButton
-            v-if="isAuth"
+            v-if="isAuthorized"
             class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-orange-500"
           >
             <span class="sr-only">Открыть меню</span>
             <MenuIcon v-if="!open" class="block h-6 w-6" aria-hidden="true" />
             <XIcon v-else class="block h-6 w-6" aria-hidden="true" />
           </DisclosureButton>
-          <button
+          <NuxtLink
             v-else
+            :to="{ name: 'auth-sign-in' }"
             type="button"
             class="inline-flex items-center px-3.5 py-2 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
           >
             Войти
-          </button>
+          </NuxtLink>
         </div>
         <div class="hidden lg:ml-2 lg:flex lg:items-center">
           <!-- Profile dropdown -->
-          <Menu v-if="isAuth" as="div" class="ml-4 relative flex-shrink-0">
+          <Menu v-if="isAuthorized" as="div" class="ml-4 relative flex-shrink-0">
             <div>
               <MenuButton
-                class="bg-white rounded-full flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+                class="bg-white rounded-full flex text-sm focus:outline-none transition duration-300 focus:ring-2 focus:ring-offset-2 focus:ring-orange-300"
               >
                 <span class="sr-only">Открыть меню пользователя</span>
                 <UserIcon class="text-gray-400 h-6 w-6" />
@@ -129,22 +123,27 @@ const isAuth = ref(true)
                   >
                 </MenuItem>
                 <MenuItem v-slot="{ active }">
-                  <a
-                    href="#"
-                    :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']"
-                    >Выйти</a
+                  <button
+                    :class="[
+                      active ? 'bg-gray-100' : '',
+                      'w-full text-left block px-4 py-2 text-sm text-gray-700',
+                    ]"
+                    @click="onLogout"
                   >
+                    Выйти
+                  </button>
                 </MenuItem>
               </MenuItems>
             </transition>
           </Menu>
-          <button
+          <NuxtLink
             v-else
+            :to="{ name: 'auth-sign-in' }"
             type="button"
             class="inline-flex items-center px-3.5 py-2 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
           >
             Войти
-          </button>
+          </NuxtLink>
         </div>
       </div>
     </div>
@@ -157,7 +156,7 @@ const isAuth = ref(true)
       leave-from-class="transform scale-100 opacity-100"
       leave-to-class="transform scale-95 opacity-0"
     >
-      <DisclosurePanel class="lg:hidden">
+      <DisclosurePanel class="lg:hidden shadow-bottom">
         <div class="pt-2 pb-3 space-y-1">
           <!-- Current: "bg-orange-50 border-orange-500 text-orange-700", Default: "border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800" -->
           <DisclosureButton
@@ -214,9 +213,9 @@ const isAuth = ref(true)
               </div>
             </DisclosureButton>
             <DisclosureButton
-              as="a"
-              href="#"
-              class="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
+              as="button"
+              class="block w-full px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
+              @click="onLogout"
             >
               <div class="flex gap-3 items-center">
                 <ArrowLeftOnRectangleIcon class="h-6 w-6" aria-hidden="true" />

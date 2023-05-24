@@ -20,7 +20,7 @@
       </div>
     </div>
     <div class="bg-white">
-      <div class="max-w-2xl mx-auto py-32 lg:pt-36 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
+      <div class="max-w-2xl mx-auto py-32 sm:pt-36 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
         <h2 class="sr-only">Каталог</h2>
 
         <!-- Категории -->
@@ -80,13 +80,22 @@
 <script setup lang="ts">
 import { useProductsStore } from '~/stores/useProductsStore'
 import useCategoryObserver from '~/composables/products/useCategoryObserver'
+import { refDebounced } from '@vueuse/shared'
 
 // Composable
 const { getCategoriesWithProducts } = useProductsStore()
 const { activeCategory, setCategoryRef, setCategoryButtonsRef, onHover } = useCategoryObserver()
 
 // Data
-const { data: categories } = await getCategoriesWithProducts()
+const search = refDebounced(useState('search'), 500)
+const { data: categories } = await getCategoriesWithProducts({
+  options: {
+    query: {
+      search,
+    },
+  },
+})
+
 activeCategory.value = categories?.value?.at(0)?.id ?? null
 
 const notEmptyCategories = computed(() => categories?.value?.filter((el) => el.products?.length))

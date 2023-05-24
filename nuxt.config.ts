@@ -39,6 +39,7 @@ export default defineNuxtConfig({
     public: {
       apiUrl: 'http://localhost:3050',
       apiServer: 'http://localhost:3050',
+      sentryDns: '',
     },
   },
   routeRules: {
