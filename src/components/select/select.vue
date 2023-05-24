@@ -42,7 +42,7 @@ watchEffect(() => {
   modelValue.value = props.modelValue
 })
 
-const selected = computed<any>({
+const model = computed<any>({
   get: () => {
     if (map) {
       const item = options?.value?.find((el: any) => el[optionsValue.value] === modelValue.value)
@@ -55,7 +55,7 @@ const selected = computed<any>({
 </script>
 
 <template>
-  <Listbox v-model="selected" as="div" v-bind="$attrs">
+  <Listbox v-model="model" as="div" v-bind="$attrs">
     <ListboxLabel v-if="label" class="block text-sm font-medium text-gray-700 dark:text-gray-200">
       {{ label }}
     </ListboxLabel>
@@ -63,8 +63,8 @@ const selected = computed<any>({
       <ListboxButton
         class="bg-white relative w-full border border-gray-300 rounded-md shadow-sm pl-3 pr-14 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500 sm:text-sm dark:bg-slate-600 dark:border-slate-500 dark:text-gray-200"
       >
-        <slot name="selectedValue" :value="selected">
-          <span v-if="selected" class="block truncate">{{ selected[optionsLabel ?? 'name'] }}</span>
+        <slot name="selectedValue" :value="model">
+          <span v-if="model" class="block truncate">{{ model[optionsLabel ?? 'name'] }}</span>
           <span v-else class="block truncate">-</span>
           <span class="absolute inset-y-0 right-6 flex items-center pr-2 pointer-events-none">
             <ChevronUpDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
@@ -74,7 +74,7 @@ const selected = computed<any>({
       <button
         type="button"
         class="absolute inset-y-0 right-0 flex items-center pr-2"
-        @click="selected = undefined"
+        @click="model = undefined"
       >
         <XCircleIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
       </button>
@@ -93,7 +93,7 @@ const selected = computed<any>({
           <ListboxOption
             v-for="option in options"
             :key="option[optionsValue]"
-            v-slot="{ active, selected }"
+            v-slot="{ active }"
             as="template"
             :value="map ? option[optionsValue] : option"
           >
@@ -106,12 +106,12 @@ const selected = computed<any>({
               ]"
             >
               <slot name="option" :value="option">
-                <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">
+                <span :class="[option === model ? 'font-semibold' : 'font-normal', 'block truncate']">
                   {{ option[optionsLabel] }}
                 </span>
               </slot>
               <span
-                v-if="selected"
+                v-if="option === model"
                 :class="[
                   active ? 'text-white' : 'text-orange-600',
                   'absolute inset-y-0 right-0 flex items-center pr-4',

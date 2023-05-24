@@ -1,22 +1,36 @@
 <script setup lang="ts">
 import { XMarkIcon } from '@heroicons/vue/20/solid'
 import { formatOrder } from '~/services/order-service'
-import { OrderStatusesOptions, OrderTypesOptions } from '~/services/order-service'
+import { OrderStatusesOptions } from '~/services/order-service'
+import { IOrder, IOnceOrder, IUpdateOrder } from '~/domain/order'
+import * as yup from 'yup'
 
 const props = defineProps<{
   orderId: number
 }>()
 
-const { getOrder } = useOrdersStore()
+const { getOrder, updateOrder } = useOrdersStore()
+const { onDismiss, onOk, onClose } = useModalActions()
 
 const id = toRef(props.orderId)
 const { data: order } = await getOrder({ id: id.value })
-const status = ref(order.value?.status)
-const type = ref(order.value?.type)
+const formattedOrder = computed(() => order?.value && formatOrder<IOnceOrder>(order.value))
 
-const formattedOrder = computed(() => order?.value && formatOrder(order.value))
+const { onSubmit, useField } = useForm<IUpdateOrder, IOrder>({
+  params: {
+    submitMethod: (data) => updateOrder(id.value, data),
+    onSuccess: (data) => onOk(data),
+    sendModifiedOnly: true,
+  },
+  formParams: {
+    initialValues: order.value,
+    validationSchema: {
+      status: yup.string().required(),
+    },
+  },
+})
 
-const { onDismiss, onClose } = useModalActions()
+const statusField = useField('status')
 </script>
 
 <template>
@@ -44,7 +58,7 @@ const { onDismiss, onClose } = useModalActions()
           <dl class="divide-y divide-gray-200">
             <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
               <dt class="text-sm font-medium text-gray-500">Покупатель</dt>
-              <dd class="mt-1 flex text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+              <dd class="mt-1 flex text-sm text-gray-я900 sm:mt-0 sm:col-span-2">
                 <span class="flex-grow">{{ formattedOrder?.user?.name }}</span>
                 <span class="ml-4 flex-shrink-0"> </span>
               </dd>
@@ -68,8 +82,8 @@ const { onDismiss, onClose } = useModalActions()
             <div class="py-4 sm:grid sm:py-5 sm:grid-cols-3 sm:gap-4">
               <dt class="text-sm font-medium text-gray-500">Статус заказа</dt>
               <dd class="mt-1 flex text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                <Select
-                  v-model="status"
+                <SelectField
+                  :field="statusField"
                   class="w-52"
                   :options="OrderStatusesOptions"
                   map
@@ -80,25 +94,23 @@ const { onDismiss, onClose } = useModalActions()
             <div class="py-4 sm:grid sm:py-5 sm:grid-cols-3 sm:gap-4">
               <dt class="text-sm font-medium text-gray-500">Тип доставки</dt>
               <dd class="mt-1 flex text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                <Select v-model="type" class="w-52" />
+                {{ formattedOrder?.type }}
               </dd>
             </div>
             <div class="py-4 sm:grid sm:py-5 sm:grid-cols-3 sm:gap-4">
-              <dt class="text-sm font-medium text-gray-500">Информация о доствке</dt>
+              <dt class="text-sm font-medium text-gray-500">Тип оплаты</dt>
               <dd class="mt-1 flex text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                <span class="flex-grow">
-                  Fugiat ipsum ipsum deserunt culpa aute sint do nostrud anim incididunt cillum
-                  culpa consequat. Excepteur qui ipsum aliquip consequat sint. Sit id mollit nulla
-                  mollit nostrud in ea officia proident. Irure nostrud pariatur mollit ad
-                  adipisicing reprehenderit deserunt qui eu.
-                </span>
+                {{ formattedOrder?.paymentType }}
               </dd>
             </div>
           </dl>
         </div>
+        <dt class="flex text-lg col-span-3 pt-3 font-bold text-black border-t w-full">
+          Состав заказа
+        </dt>
         <ul role="list" class="flex-auto col-span-3 overflow-y-auto divide-y divide-gray-200 px-2">
           <li
-            v-for="item in [...formattedOrder?.products, ...formattedOrder?.products]"
+            v-for="item in [...formattedOrder?.products]"
             :key="item.id"
             class="flex py-6 space-x-2"
           >
@@ -121,7 +133,7 @@ const { onDismiss, onClose } = useModalActions()
     <template #actions>
       <div class="flex w-full justify-between">
         <button class="text-gray-500 hover:text-gray-900" @click="onDismiss">Закрыть</button>
-        <button class="text-green-500 hover:text-green-900">Сохранить</button>
+        <button class="text-green-500 hover:text-green-900" @click="onSubmit">Сохранить</button>
       </div>
     </template>
   </Modal>

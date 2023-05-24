@@ -8,6 +8,7 @@ import ModalOrder from '~/components/modal/order/modal-order.vue'
 
 definePageMeta({
   layout: 'admin',
+  middleware: ['admin'],
 })
 
 const { showModal } = useModal()
@@ -51,6 +52,11 @@ const showViewModal = (item: IOrder) => {
     props: {
       orderId: item.id,
     },
+  }).onOk((data: IOrder) => {
+    const initialEl = paginatedOrders.value?.data.find((el) => el.id === item.id)
+    if (initialEl) {
+      Object.assign(initialEl, data)
+    }
   })
 }
 </script>

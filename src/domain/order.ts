@@ -1,6 +1,7 @@
 import { components } from '~/domain/schema'
 
 export type IOrder = components['schemas']['OrderEntity']
+export type IOnceOrder = components['schemas']['RetriveOrderEntity']
 export type IUpdateOrder = components['schemas']['UpdateOrderDto']
 
 // "CREATED" | "IN_PROGRESS" | "DELIVERED" | "CANCELED" | "COMPLETED"
@@ -29,4 +30,9 @@ export const OrderStatusesMap = new Map<IOrder['status'], string>([
 export const OrderTypesMap = new Map<IOrder['type'], string>([
   ['PICKUP', 'Самовывоз'],
   ['DELIVERY', 'Доставка'],
+])
+
+export const OrderPaymentTypesMap = new Map<IOrder['paymentType'], string>([
+  ['UPON_RECEIPT_BY_CARD', 'Картой при получении'],
+  ['UPON_RECEIPT_IN_CASH', 'Наличными при получении'],
 ])

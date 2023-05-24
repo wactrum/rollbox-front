@@ -342,7 +342,7 @@ export interface components {
       location: string | null;
     };
     ProductsOnOrdersEntity: {
-      product: components["schemas"]["ProductEntity"];
+      product: (components["schemas"]["ProductEntity"])[];
       id: number;
       discount: number;
       orderId: number;
@@ -1137,7 +1137,7 @@ export interface operations {
   OrdersController_findOne: {
     parameters: {
       path: {
-        id: string;
+        id: number;
       };
     };
     responses: {
@@ -1151,7 +1151,7 @@ export interface operations {
   OrdersController_remove: {
     parameters: {
       path: {
-        id: string;
+        id: number;
       };
     };
     responses: {
@@ -1161,7 +1161,7 @@ export interface operations {
   OrdersController_update: {
     parameters: {
       path: {
-        id: string;
+        id: number;
       };
     };
     requestBody: {
@@ -1180,7 +1180,7 @@ export interface operations {
   OrdersController_cancel: {
     parameters: {
       path: {
-        id: string;
+        id: number;
       };
     };
     requestBody: {

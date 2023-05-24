@@ -5,7 +5,7 @@
     "build": "nuxt build",
     "dev": "nuxt dev --port 4444",
     "generate": "nuxt generate",
-    "preview": "nuxt preview",
+    "preview": "PORT=8888 nuxt preview",
     "postinstall": "nuxt prepare",
     "lint": "eslint --ext .js,.ts,.vue ./",
     "lint:fix": "eslint --ext .js,.ts,.vue --fix ./"

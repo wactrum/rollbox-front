@@ -1,5 +1,6 @@
 import {
   IOrder,
+  OrderPaymentTypesMap,
   OrderStatusesEnum,
   OrderStatusesMap,
   OrderTypesEnum,
@@ -11,7 +12,7 @@ export const formatOrders = (orders: IOrder[]) => {
   return orders.map((el) => formatOrder(el))
 }
 
-export const formatOrder = (order: IOrder) => {
+export const formatOrder = <T extends IOrder>(order: T) => {
   const el = order
   const isWaiting = [
     OrderStatusesEnum.CREATED,
@@ -24,6 +25,7 @@ export const formatOrder = (order: IOrder) => {
     price: `${el.price}₽`,
     status: OrderStatusesMap.get(el.status),
     type: OrderTypesMap.get(el.type),
+    paymentType: OrderPaymentTypesMap.get(el.paymentType),
     createdAt: format(new Date(el.createdAt), 'dd.MM.yyyy HH:mm:ss'),
     waitTime: computed(() => {
       const current = ref()
@@ -55,7 +57,6 @@ export const OrderStatusesOptions = [
     value: OrderStatusesEnum.IN_PROGRESS,
   },
   { name: OrderStatusesMap.get(OrderStatusesEnum.DELIVERED), value: OrderStatusesEnum.DELIVERED },
-  { name: OrderStatusesMap.get(OrderStatusesEnum.CANCELED), value: OrderStatusesEnum.CANCELED },
   { name: OrderStatusesMap.get(OrderStatusesEnum.COMPLETED), value: OrderStatusesEnum.COMPLETED },
 ]
 

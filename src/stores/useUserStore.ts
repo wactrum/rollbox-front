@@ -3,6 +3,9 @@ import type { components } from '~/domain/schema'
 import type { IUser } from '~/domain/user'
 import { makeAsyncApiFn } from '~/composables/api/use-api'
 
+export type ISignForm = components['schemas']['AuthDto']
+export type ISignResponse = components['schemas']['LoginResponseDto']
+export type IRolesResponse = components['schemas']['RoleEntity'][]
 export const useUserStore = defineStore('user', () => {
   const user = useSCookie<IUser | null>('user', { default: () => null })
   const accessToken = useSCookie<string | null>('accessToken', {
@@ -69,7 +72,3 @@ export const useUserStore = defineStore('user', () => {
 if (import.meta.hot) {
   import.meta.hot.accept(acceptHMRUpdate(useUserStore, import.meta.hot))
 }
-
-export type ISignForm = components['schemas']['AuthDto']
-export type ISignResponse = components['schemas']['LoginResponseDto']
-export type IRolesResponse = components['schemas']['RoleEntity'][]
