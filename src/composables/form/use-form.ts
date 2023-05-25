@@ -6,7 +6,6 @@ import {
   useField,
   useForm,
   FormContext,
-  Path,
 } from 'vee-validate'
 import type { MaybeRef } from '@vueuse/core'
 import { FetchError } from 'ofetch'
@@ -34,7 +33,7 @@ export default <
     Object.keys(formParams.validationSchema).map((el) => [el, useField(el)])
   )
 
-  const { handleSubmit, meta, setErrors, setTouched, resetForm } = form
+  const { handleSubmit, meta, setErrors, resetForm } = form
 
   const defaults: IDefaults<SubmitValues, ReturnValues, ErrorType> = {
     onError: (error: ErrorType) => {

@@ -10,7 +10,7 @@ export default defineNuxtPlugin((nuxtApp) => {
       dsn: dns,
       integrations: [
         new Sentry.BrowserTracing({
-          routingInstrumentation: Sentry.vueRouterInstrumentation(nuxtApp.$router as any),
+          routingInstrumentation: Sentry.vueRouterInstrumentation(useRouter()),
         }),
         new Sentry.Replay(),
       ],

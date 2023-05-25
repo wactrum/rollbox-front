@@ -8,7 +8,7 @@ import ModalOrder from '~/components/modal/order/modal-order.vue'
 
 definePageMeta({
   layout: 'admin',
-  middleware: ['admin'],
+  middleware: ['auth', 'admin'],
 })
 
 const { showModal } = useModal()

@@ -7,7 +7,7 @@ import TableCellEdit from '~/components/table/cell/table-cell-edit.vue'
 
 definePageMeta({
   layout: 'admin',
-  middleware: ['admin'],
+  middleware: ['auth', 'admin'],
 })
 
 const { showModal } = useModal()

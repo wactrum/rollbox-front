@@ -1,3 +1,51 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import { Dialog, DialogOverlay, TransitionChild, TransitionRoot } from '@headlessui/vue'
+import {
+  HomeIcon,
+  ListBulletIcon,
+  CubeIcon,
+  Bars4Icon as MenuIcon,
+  XMarkIcon as XIcon,
+  InboxArrowDownIcon,
+  UserGroupIcon,
+  ShieldCheckIcon,
+} from '@heroicons/vue/24/outline'
+import { ArrowLeftOnRectangleIcon } from '@heroicons/vue/24/solid'
+import { usePreferredDark } from '@vueuse/core'
+
+useHead(() => ({
+  titleTemplate: (titleChunk) => {
+    return titleChunk ? `${titleChunk} - Администрирование RollBox` : 'Администрирование RollBox'
+  },
+}))
+
+const { logOut } = useUserStore()
+
+const navigation = [
+  { name: 'Главная', to: { name: 'admin' }, icon: HomeIcon, current: true },
+  { name: 'Категории', to: { name: 'admin-categories' }, icon: ListBulletIcon, current: false },
+  { name: 'Продукты', to: { name: 'admin-products' }, icon: CubeIcon, current: false },
+  { name: 'Заказы', to: { name: 'admin-orders' }, icon: InboxArrowDownIcon, current: false },
+  { name: 'Пользователи', to: { name: 'admin-users' }, icon: UserGroupIcon, current: false },
+  { name: 'Роли', to: { name: 'admin-roles' }, icon: ShieldCheckIcon, current: false },
+]
+
+const sidebarOpen = ref(false)
+const isDark = usePreferredDark()
+
+const onLogout = () => {
+  logOut()
+  navigateTo({ name: 'auth-sign-in' })
+}
+
+// useHead({
+//   bodyAttrs: {
+//     class: isDark.value ? 'dark' : '',
+//   },
+// })
+</script>
+
 <template>
   <div class="h-screen flex">
     <TransitionRoot as="template" :show="sidebarOpen">
@@ -127,6 +175,7 @@
             <button
               type="button"
               class="flex gap-3 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100 dark:hover:bg-gray-600 p-4 rounded-md dark:text-gray-300 dark:hover:text-gray-200"
+              @click="onLogout"
             >
               <ArrowLeftOnRectangleIcon class="h-6 w-6" aria-hidden="true" />
               Выйти
@@ -164,41 +213,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref } from 'vue'
-import { Dialog, DialogOverlay, TransitionChild, TransitionRoot } from '@headlessui/vue'
-import {
-  HomeIcon,
-  ListBulletIcon,
-  CubeIcon,
-  Bars4Icon as MenuIcon,
-  XMarkIcon as XIcon,
-  InboxArrowDownIcon,
-  UserGroupIcon,
-  ShieldCheckIcon,
-} from '@heroicons/vue/24/outline'
-import { ArrowLeftOnRectangleIcon } from '@heroicons/vue/24/solid'
-import { usePreferredDark } from '@vueuse/core'
-
-const navigation = [
-  { name: 'Главная', to: { name: 'admin' }, icon: HomeIcon, current: true },
-  { name: 'Категории', to: { name: 'admin-categories' }, icon: ListBulletIcon, current: false },
-  { name: 'Продукты', to: { name: 'admin-products' }, icon: CubeIcon, current: false },
-  { name: 'Заказы', to: { name: 'admin-orders' }, icon: InboxArrowDownIcon, current: false },
-  { name: 'Пользователи', to: { name: 'admin-users' }, icon: UserGroupIcon, current: false },
-  { name: 'Роли', to: { name: 'admin-roles' }, icon: ShieldCheckIcon, current: false },
-]
-
-const sidebarOpen = ref(false)
-const isDark = usePreferredDark()
-
-// useHead({
-//   bodyAttrs: {
-//     class: isDark.value ? 'dark' : '',
-//   },
-// })
-</script>
 
 <style lang="scss">
 .apexcharts-legend-text {

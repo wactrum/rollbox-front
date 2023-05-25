@@ -83,6 +83,10 @@ definePageMeta({
   middleware: ['guest'],
 })
 
+useHead({
+  title: 'Авторизация',
+})
+
 const { signIn } = useUserStore()
 
 const { useField, onSubmit } = useForm<ISignForm>({
@@ -115,7 +119,9 @@ const { useField, onSubmit } = useForm<ISignForm>({
       }
     },
     onSuccess: async () => {
-      await navigateTo({ name: 'index' })
+      const redirectTo = useState('redirectTo')
+      await navigateTo(redirectTo.value ? redirectTo.value : { name: 'index' })
+      redirectTo.value = null
     },
   },
 })

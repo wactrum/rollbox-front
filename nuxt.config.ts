@@ -44,6 +44,7 @@ export default defineNuxtConfig({
   },
   routeRules: {
     '/admin/**': { ssr: false },
+    '/auth/**': { ssr: false },
   },
   experimental: {
     typedPages: true,

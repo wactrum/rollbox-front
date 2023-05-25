@@ -3,7 +3,7 @@ import VueApexCharts from 'vue3-apexcharts'
 
 definePageMeta({
   layout: 'admin',
-  middleware: ['admin'],
+  middleware: ['auth', 'admin'],
 })
 
 const stats = [

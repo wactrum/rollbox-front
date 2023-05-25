@@ -85,18 +85,6 @@ export default function () {
     activeCategory.value = category.id
   }
 
-  /**
-   * Следим за типом курсора, если это не мышь, останавливаем observers
-   * и работаем с hover внутри компонента
-   */
-  watch(sourceType, (val) => {
-    if (val === 'mouse') {
-      stopObserve()
-    } else {
-      startObserve()
-    }
-  })
-
   return {
     activeCategory,
     setCategoryRef,
