@@ -1,7 +1,7 @@
 <script setup lang="ts">
-const title = '%NAME% - заказ роллов и суши по низким ценам в Астрахани'
+const title = 'Rollbox - заказ роллов и суши по низким ценам в Астрахани'
 const description =
-  '%NAME% - доставка роллов и суши в городе Астрахань. Суши, пицца, роллы, шаурма - быстрая доставка и высокое качество.'
+  'Rollbox - доставка роллов и суши в городе Астрахань. Суши, пицца, роллы, шаурма - быстрая доставка и высокое качество.'
 
 useHead(() => ({
   title,
@@ -24,12 +24,12 @@ useSeoMeta({
 
 useSchemaOrg([
   defineOrganization({
-    name: '%NAME%',
+    name: 'Rollbox',
     logo: '/logo.svg',
     //sameAs: ['instagram_url'],
   }),
   defineWebSite({
-    name: '%NAME%',
+    name: 'Rollbox',
   }),
 ])
 </script>

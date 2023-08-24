@@ -18,7 +18,7 @@ import ruRU from 'element-plus/dist/locale/ru.mjs'
 
 useHead(() => ({
   titleTemplate: (titleChunk) => {
-    return titleChunk ? `${titleChunk} - Администрирование %NAME%` : 'Администрирование %NAME%'
+    return titleChunk ? `${titleChunk} - Администрирование Rollbox` : 'Администрирование Rollbox'
   },
 }))
 
@@ -97,7 +97,7 @@ const onLogout = () => {
                 <div class="flex-shrink-0 flex items-center px-4">
                   <div class="flex gap-2 items-center">
                     <img class="h-8 w-auto" src="/logo.svg" alt="Workflow" />
-                    <p class="text-xl">%NAME%</p>
+                    <p class="text-xl">Rollbox</p>
                   </div>
                 </div>
                 <nav aria-label="Sidebar" class="mt-5">
@@ -146,7 +146,7 @@ const onLogout = () => {
             <div class="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
               <div class="flex items-center flex-shrink-0 px-4">
                 <img src="/logo.svg" class="w-8 h-8" />
-                <p class="text-xl ml-2 dark:text-white">%NAME%</p>
+                <p class="text-xl ml-2 dark:text-white">Rollbox</p>
               </div>
               <nav class="mt-5 flex-1" aria-label="Sidebar">
                 <div class="px-2 space-y-1">
@@ -195,7 +195,7 @@ const onLogout = () => {
           >
             <div class="flex gap-2 items-center">
               <img class="h-8 w-auto" src="/logo.svg" alt="Workflow" />
-              <p class="text-xl">%NAME%</p>
+              <p class="text-xl">Rollbox</p>
             </div>
             <div>
               <button
