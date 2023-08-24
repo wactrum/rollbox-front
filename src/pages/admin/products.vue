@@ -38,7 +38,7 @@ const { data: paginatedProducts } = await getAdminProducts({
       showDeleted,
       sortBy: computed(() => sort.value?.name),
       sortOrder: computed(() => {
-        if (sort.value) return sort.value.order === 1 ? 'asc' : 'desc'
+        if (sort.value) return sort.value?.order === 1 ? 'asc' : 'desc'
       }),
     },
   },
@@ -123,7 +123,7 @@ const onDeleteClick = (item: any) => {
 
     <template #cell-image="{ item }">
       <div class="aspect-square w-24 flex items-center justify-center">
-        <nuxt-img :src="item.productImage.path" class="w-full" />
+        <nuxt-img :src="item.productImage.path" class="w-full rounded-md" />
       </div>
     </template>
 

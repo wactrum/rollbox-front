@@ -4,8 +4,6 @@ export type IOrder = components['schemas']['OrderEntity']
 export type IOnceOrder = components['schemas']['RetriveOrderEntity']
 export type IUpdateOrder = components['schemas']['UpdateOrderDto']
 
-// "CREATED" | "IN_PROGRESS" | "DELIVERED" | "CANCELED" | "COMPLETED"
-
 export enum OrderStatusesEnum {
   CREATED = 'CREATED',
   IN_PROGRESS = 'IN_PROGRESS',
@@ -36,3 +34,13 @@ export const OrderPaymentTypesMap = new Map<IOrder['paymentType'], string>([
   ['UPON_RECEIPT_BY_CARD', 'Картой при получении'],
   ['UPON_RECEIPT_IN_CASH', 'Наличными при получении'],
 ])
+
+export const statusOptions = Object.values(OrderStatusesEnum).map((el) => ({
+  id: el,
+  name: OrderStatusesMap.get(el),
+}))
+
+export const typeOptions = Object.values(OrderTypesEnum).map((el) => ({
+  id: el,
+  name: OrderTypesMap.get(el),
+}))

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 useHead(() => ({
   titleTemplate: (titleChunk) => {
-    return titleChunk ? `${titleChunk} - RollBox` : 'RollBox'
+    return titleChunk ? `${titleChunk} - %NAME%` : '%NAME%'
   },
 }))
 </script>

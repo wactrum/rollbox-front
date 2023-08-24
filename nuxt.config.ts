@@ -1,6 +1,9 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   srcDir: './src',
+  /**
+   * Автоматические импорты
+   */
   imports: {
     dirs: ['composables/**', 'components/**', 'utils/**', 'stores/**', 'plugins/**'],
   },
@@ -8,6 +11,8 @@ export default defineNuxtConfig({
     '@nuxtjs/tailwindcss',
     '@pinia/nuxt',
     '@nuxt/image-edge',
+    'nuxt-schema-org',
+    '@element-plus/nuxt', // admin ui only
     [
       '@nuxtjs/robots',
       {
@@ -16,6 +21,12 @@ export default defineNuxtConfig({
       },
     ],
   ],
+
+  elementPlus: {
+    importStyle: false,
+    icon: false,
+  },
+
   css: ['@/assets/css/main.css'],
   pinia: {
     autoImports: ['defineStore', 'storeToRefs', ['defineStore', 'definePiniaStore']],
@@ -48,6 +59,7 @@ export default defineNuxtConfig({
   },
   experimental: {
     typedPages: true,
+    renderJsonPayloads: false,
   },
   vite: {
     vue: {

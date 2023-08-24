@@ -1,7 +1,7 @@
 <script setup lang="ts">
-const title = 'RollBox - заказ роллов и суши по низким ценам в Астрахани'
+const title = '%NAME% - заказ роллов и суши по низким ценам в Астрахани'
 const description =
-  'RollBox - доставка роллов и суши в городе Астрахань. Суши, пицца, роллы, шаурма - быстрая доставка и высокое качество.'
+  '%NAME% - доставка роллов и суши в городе Астрахань. Суши, пицца, роллы, шаурма - быстрая доставка и высокое качество.'
 
 useHead(() => ({
   title,
@@ -10,14 +10,28 @@ useHead(() => ({
   },
 }))
 
+const host = useHost()
+
 useSeoMeta({
   title: title,
   ogTitle: title,
   description: description,
   ogDescription: description,
-  ogImage: ``,
+  ogImage: `https://${host}/preview.jpg`,
+  twitterImage: `https://${host}/preview.jpg`,
   twitterCard: 'summary_large_image',
 })
+
+useSchemaOrg([
+  defineOrganization({
+    name: '%NAME%',
+    logo: '/logo.svg',
+    //sameAs: ['instagram_url'],
+  }),
+  defineWebSite({
+    name: '%NAME%',
+  }),
+])
 </script>
 
 <template>

@@ -106,7 +106,9 @@ const model = computed<any>({
               ]"
             >
               <slot name="option" :value="option">
-                <span :class="[option === model ? 'font-semibold' : 'font-normal', 'block truncate']">
+                <span
+                  :class="[option === model ? 'font-semibold' : 'font-normal', 'block truncate']"
+                >
                   {{ option[optionsLabel] }}
                 </span>
               </slot>

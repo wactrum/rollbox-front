@@ -3,6 +3,7 @@
     <div class="fixed bg-white w-screen shadow-bottom z-10">
       <!-- Верхнее меню -->
       <div
+        ref="navRef"
         class="max-w-7xl mx-auto flex gap-4 px-4 lg:pt-6 overflow-x-auto mt-16 w-full no-scrollbar whitespace-nowrap py-2"
       >
         <AnimateTransition enter-name="slideInRight" out-name="fadeOut" speed="faster" group>
@@ -15,6 +16,7 @@
               'inline-flex items-center duration-300 transition px-4 py-2 border border-transparent text-sm font-medium rounded-md text-amber-700 bg-amber-100 hover:bg-amber-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500',
               { 'bg-amber-200': activeCategory === category.id },
             ]"
+            @click="onHeaderCategoryClick(category)"
           >
             {{ category.name }}
           </button>
@@ -31,7 +33,7 @@
             v-for="category in notEmptyCategories"
             :ref="(el: any) => setCategoryRef(el, category)"
             :key="category.id"
-            class="flex flex-col gap-2 py-4"
+            class="flex flex-col gap-2 py-4 scroll-mt-32"
             @mouseenter="onHover(category)"
           >
             <span class="text-2xl">
@@ -41,38 +43,13 @@
             <div
               class="grid grid-cols-1 gap-y-4 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-10 lg:grid-cols-3 lg:gap-x-8"
             >
-              <!-- Товары -->
+              <!-- Товары категории -->
               <AnimateTransition enter-name="fadeIn" out-name="fadeOut" speed="faster" group>
-                <div
+                <ProductCard
                   v-for="product in category.products"
                   :key="product.id"
-                  class="cursor-pointer relative bg-white border border-gray-200 rounded-lg flex flex-col overflow-hidden transition-all duration-300 hover:shadow-md"
-                >
-                  <div class="aspect-square max-h-[150px] bg-gray-200 sm:aspect-none sm:h-96">
-                    <nuxt-img
-                      :src="product.productImage?.path"
-                      :alt="product.name"
-                      class="w-full h-full object-center object-cover sm:w-full sm:h-full"
-                    />
-                  </div>
-                  <div class="flex-1 p-4 space-y-2 flex flex-col">
-                    <h3 class="text-sm font-medium text-gray-900">
-                      <span>
-                        <span aria-hidden="true" class="absolute inset-0" />
-                        {{ product.name }}
-                      </span>
-                    </h3>
-                    <p class="text-sm text-gray-500 line-clamp-4">{{ product.description }}</p>
-                    <div class="flex-1 flex flex-col justify-end items-end">
-                      <button
-                        type="button"
-                        class="inline-flex items-center px-4 py-2 rounded-xl border border-black text-sm font-medium text-black bg-transparent hover:bg-orange-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-                      >
-                        {{ product.price }} ₽
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                  :product="product"
+                />
               </AnimateTransition>
             </div>
           </div>
@@ -83,13 +60,15 @@
 </template>
 
 <script setup lang="ts">
-import { useProductsStore } from '~/stores/useProductsStore'
-import useCategoryObserver from '~/composables/products/useCategoryObserver'
 import { refDebounced } from '@vueuse/shared'
+
+// Ref
+const navRef = ref<HTMLElement>()
 
 // Composable
 const { getCategoriesWithProducts } = useProductsStore()
-const { activeCategory, setCategoryRef, setCategoryButtonsRef, onHover } = useCategoryObserver()
+const { activeCategory, setCategoryRef, setCategoryButtonsRef, onHeaderCategoryClick, onHover } =
+  useCategoryInteractive(navRef)
 
 // Data
 const search = refDebounced(useState('search'), 500)
@@ -108,4 +87,6 @@ const notEmptyCategories = computed(() => categories?.value?.filter((el) => el.p
 const categoriesMenuItems = computed<{ id: number; name: string }[]>(
   () => notEmptyCategories.value?.map((el) => ({ id: el.id, name: el.name })) ?? []
 )
+
+useProductsSchema(categories)
 </script>

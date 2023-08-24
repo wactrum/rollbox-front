@@ -22,7 +22,8 @@ const props = withDefaults(defineProps<Props>(), {
   withoutLeave: false,
 })
 
-const { enterName, outName, speed, withoutEnter, withoutLeave } = toRefs(props)
+const { enterName, outName, speed, withoutEnter, withoutLeave, group } = toRefs(props)
+const attrs = !group.value && { mode: 'out-in' }
 
 const enterActiveClass = computed(() =>
   withoutEnter.value ? '' : `animate__animated animate__${speed.value} animate__${enterName.value}`
@@ -38,8 +39,7 @@ const leaveActiveClass = computed(() =>
     :is="group ? TransitionGroup : Transition"
     :enter-active-class="enterActiveClass"
     :leave-active-class="leaveActiveClass"
-    mode="out-in"
-    v-bind="$attrs"
+    v-bind="attrs"
   >
     <slot />
   </Component>
