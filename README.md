@@ -1,42 +1,27 @@
-# Nuxt 3 Minimal Starter
+# Rollbox
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Web service | Nuxt 3 application
 
-## Setup
+### Перед установкой у вас должны быть установлены
+- node >= 16
 
-Make sure to install the dependencies:
-
+## Установка
 ```bash
-# yarn
-yarn install
-
-# npm
-npm install
-
-# pnpm
-pnpm install
+yarn
 ```
 
-## Development Server
-
-Start the development server on `http://localhost:3000`
-
+Скопируйте файл ".env.example" в ".env" и измените строку, NUXT_PUBLIC_API_URL если это необходимо:
 ```bash
-npm run dev
+NUXT_PUBLIC_API_URL="https://localhost:8080/"
 ```
 
-## Production
-
-Build the application for production:
-
+### Запуск в режиме разработки
 ```bash
-npm run build
+yarn dev
+```
+Собрать проект
+```bash
+yarn build
 ```
 
-Locally preview production build:
-
-```bash
-npm run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+### [Документация Nuxt3](https://nuxt.com/)
